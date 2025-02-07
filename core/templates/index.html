@@ -1,0 +1,18 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+<h1>Monitoring mutations</h1>
+
+  <p>Welcome to <em>Web-application for monitoring mutations</em>, a website developed to allow connect to database cardio_db.</p>
+
+<h2>Dynamic content</h2>
+
+  <p>The library has the following record counts:</p>
+  <ul>
+    <li><strong>Books:</strong> {{ num_books }}</li>
+  </ul>
+  <p>
+    You have visited this page {{ num_visits }}{% if num_visits == 1 %} time{% else %} times{% endif %}.
+  </p>
+
+{% endblock %}
