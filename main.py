@@ -1,6 +1,9 @@
 import psycopg2
 import pandas as pd
 
+from authentication.models import UserData
+
+
 class pgsql_conn(object):
 
     def __init__(self, host_name, port_name, database_name, user_name, password_name):
@@ -41,7 +44,7 @@ class pgsql_conn(object):
                 self.connection.commit()
 
 
-conn = pgsql_conn('127.0.0.1',
+"""conn = pgsql_conn('127.0.0.1',
                   5433,
                   'cardio',
                   'apsamilyk',
@@ -54,4 +57,5 @@ FROM crd_dmt.data_vcf
 LIMIT 10
 ''')
 
-print(df)
+print(df)"""
+

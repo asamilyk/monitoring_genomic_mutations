@@ -7,19 +7,9 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-]
-
-urlpatterns += [
-    path('core/', include('core.urls')),
-]
-
-
-urlpatterns += [
-    path('', RedirectView.as_view(url='/core/', permanent=True)),
+    path('monitoring/', include('monitoring.urls')),
+    path('accounts/', include('django.contrib.auth.urls')),
+    path('', RedirectView.as_view(url='/monitoring/', permanent=True)),
 ]
 
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
-
-urlpatterns += [
-    path('accounts/', include('django.contrib.auth.urls')),
-]

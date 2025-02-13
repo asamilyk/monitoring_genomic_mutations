@@ -1,0 +1,12 @@
+{% extends "base_generic.html" %}
+{% block content %}
+
+<h1>Hello, {{username}}</h1>
+
+{% if search_type != "Нет данных" and gene != "Нет данных" %}
+    <p><strong>Последний Search Type:</strong> {{ search_type }}</p>
+    <p><strong>Последний Gene:</strong> {{ gene }}</p>
+{% else %}
+    <p>Нет данных о последних запросах.</p>
+{% endif %}
+{% endblock %}
