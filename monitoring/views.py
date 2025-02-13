@@ -22,6 +22,14 @@ def get_data_form(request):
 
 
 @login_required(login_url='/accounts/login/')
+def display_last(request):
+    last_entry = UserData.objects.filter(user=request.user).order_by('-id').first()
+    search_type = last_entry.search_type if last_entry else "Нет данных"
+    gene = last_entry.gene if last_entry else "Нет данных"
+    return redirect("display_result", search_type=search_type, gene=gene)
+
+
+@login_required(login_url='/accounts/login/')
 def display_result(request, search_type, gene):
     return render(
         request,
@@ -32,11 +40,3 @@ def display_result(request, search_type, gene):
             "gene": gene
         }
     )
-
-
-@login_required(login_url='/accounts/login/')
-def display_last(request):
-    last_entry = UserData.objects.filter(user=request.user).order_by('-id').first()
-    search_type = last_entry.search_type if last_entry else "Нет данных"
-    gene = last_entry.gene if last_entry else "Нет данных"
-    return redirect("display_result", search_type=search_type, gene=gene)

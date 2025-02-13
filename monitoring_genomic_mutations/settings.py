@@ -126,3 +126,5 @@ LOGOUT_REDIRECT_URL = '/'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+SESSION_COOKIE_AGE = 60 * 60 * 24 * 30  # 30 дней
+SESSION_EXPIRE_AT_BROWSER_CLOSE = False
