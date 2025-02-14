@@ -40,19 +40,3 @@ class pgsql_conn(object):
                     cursor.copy_expert(sql_string, f)
 
                 self.connection.commit()
-
-conn = pgsql_conn('127.0.0.1',
-                  5433,
-                  'cardio',
-                  'apsamilyk',
-                  '0502hsecardio2025')
-
-df = conn.read_sql(f''' 
-SELECT  
-    id, orig_id, chrom, pos  
-FROM crd_dmt.data_vcf 
-LIMIT 10
-''')
-
-print(df)
-

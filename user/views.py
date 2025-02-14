@@ -1,6 +1,6 @@
 from django.contrib.auth.views import LoginView
 
-from authentication.forms import LoginForm
+from user.forms import LoginForm
 
 
 class UpdatedLoginView(LoginView):
