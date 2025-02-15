@@ -1,12 +1,26 @@
 {% extends "base_generic.html" %}
 {% block content %}
-
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/styles.css' %}">
 <h1>Hello, {{username}}</h1>
 
-{% if search_type != "Нет данных" and gene != "Нет данных" %}
-    <p><strong>Последний Search Type:</strong> {{ search_type }}</p>
-    <p><strong>Последний Gene:</strong> {{ gene }}</p>
-{% else %}
-    <p>Нет данных о последних запросах.</p>
-{% endif %}
+<table border="1">
+    <thead>
+    <tr>
+        {% for column in records.0.keys %}
+        <th>{{ column }}</th>
+        {% endfor %}
+    </tr>
+    </thead>
+    <tbody>
+    {% for row in records %}
+    <tr>
+        {% for value in row.values %}
+        <td>{{ value }}</td>
+        {% endfor %}
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+
 {% endblock %}
