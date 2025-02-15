@@ -39,7 +39,7 @@ def display_result(request, search_type, gene):
                       REMOTE_DB_PASSWORD)
     df = conn.read_sql(f''' 
     SELECT  
-        id, orig_id, chrom, pos  
+        id  
     FROM crd_dmt.data_vcf 
     LIMIT 10
     ''')
