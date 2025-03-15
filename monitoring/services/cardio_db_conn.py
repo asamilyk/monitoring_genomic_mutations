@@ -40,3 +40,5 @@ class pgsql_conn(object):
                     cursor.copy_expert(sql_string, f)
 
                 self.connection.commit()
+
+
