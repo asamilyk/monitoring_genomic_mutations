@@ -1,11 +1,8 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
-
-from monitoring_genomic_mutations.settings import REMOTE_DB_HOST, REMOTE_DB_PORT, REMOTE_DB_NAME, REMOTE_DB_USER, \
-    REMOTE_DB_PASSWORD
 from user.models import UserData
 from .forms import GettingDataForm
-from .services.cardio_db_conn import pgsql_conn
+from .services.get_method import get_data
 
 ans = 0
 @login_required(login_url='/accounts/login/')
@@ -33,19 +30,8 @@ def display_last(request):
 @login_required(login_url='/accounts/login/')
 def display_result(request, search_type, gene):
     global ans
-    if ans == 0:
-        conn = pgsql_conn(REMOTE_DB_HOST,
-                          REMOTE_DB_PORT,
-                          REMOTE_DB_NAME,
-                          REMOTE_DB_USER,
-                          REMOTE_DB_PASSWORD)
-        df = conn.read_sql(f''' 
-            SELECT  
-                id  
-            FROM crd_dmt.data_vcf 
-            LIMIT 10
-            ''')
-        records = df.to_dict(orient="records")
+    if not ans:
+        records = get_data(search_type, gene)
         ans = records
     return render(
         request,

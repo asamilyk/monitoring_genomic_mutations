@@ -1,26 +1,45 @@
-{% extends "base_generic.html" %}
-{% block content %}
-{% load static %}
-<link rel="stylesheet" href="{% static 'css/styles.css' %}">
-<h1>Hello, {{username}}</h1>
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="utf-8">
+    <title>Login Form</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/styles_display.css' %}">
+</head>
 
-<table border="1">
-    <thead>
-    <tr>
-        {% for column in records.0.keys %}
-        <th>{{ column }}</th>
-        {% endfor %}
-    </tr>
-    </thead>
-    <tbody>
-    {% for row in records %}
-    <tr>
-        {% for value in row.values %}
-        <td>{{ value }}</td>
-        {% endfor %}
-    </tr>
-    {% endfor %}
-    </tbody>
-</table>
+<body>
+<div class="user-greeting">
+    <h2>Hello, {{ username }}</h2>
+</div>
+<nav class="nav-buttons">
+    <a href="{% url 'get_data' %}" class="btn-nav">Search</a>
+    <a href="{% url 'display_last' %}" class="btn-nav">Display</a>
+    <a href="{% url 'logout' %}" class="btn-nav">Logout</a>
+</nav>
+<div class="wrapper">
+    <div class="title">Monitoring Mutations</div>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
 
-{% endblock %}
+    <table border="1">
+        <thead>
+        <tr>
+            {% for column in records.0.keys %}
+            <th>{{ column }}</th>
+            {% endfor %}
+        </tr>
+        </thead>
+        <tbody>
+        {% for row in records %}
+        <tr>
+            {% for value in row.values %}
+            <td>{{ value }}</td>
+            {% endfor %}
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+</div>
+</body>
+</html>

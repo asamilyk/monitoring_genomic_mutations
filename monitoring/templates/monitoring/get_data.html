@@ -1,7 +1,25 @@
-{% extends "base_generic.html" %}
-<label>Hello, {{name}}</label>
-{% block content %}
-<form method="post" action="">
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="utf-8">
+    <title>Login Form</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/styles_get.css' %}">
+</head>
+
+<body>
+<div class="user-greeting">
+    <h2>Hello, {{ name }}</h2>
+</div>
+<nav class="nav-buttons">
+    <a href="{% url 'get_data' %}" class="btn-nav">Search</a>
+    <a href="{% url 'display_last' %}" class="btn-nav">Display</a>
+    <a href="{% url 'logout' %}" class="btn-nav">Logout</a>
+</nav>
+<div class="wrapper">
+    <div class="title">Monitoring Mutations</div>
+
+    <form method="post" action="">
 
         {% csrf_token %}
         <div class="field">
@@ -16,5 +34,8 @@
         <div class="field">
             <input type="submit" value="Submit">
         </div>
-    {% endblock %}
     </form>
+
+</div>
+</body>
+</html>
