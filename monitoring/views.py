@@ -5,12 +5,13 @@ from .forms import GettingDataForm
 from .services.get_method import get_data
 
 ans = 0
+
+
 @login_required(login_url='/accounts/login/')
 def get_data_form(request):
     if request.method == "POST":
         search_type = request.POST.get("search_type")
         gene = request.POST.get("gene")
-        UserData.objects.create(user=request.user, search_type=search_type, gene=gene)
         return redirect("display_result", search_type=search_type, gene=gene)
     else:
         userform = GettingDataForm()
@@ -29,7 +30,9 @@ def display_last(request):
 
 @login_required(login_url='/accounts/login/')
 def display_result(request, search_type, gene):
+    UserData.objects.create(user=request.user, search_type=search_type, gene=gene)
     global ans
+    ans = 0
     if not ans:
         records = get_data(search_type, gene)
         ans = records
@@ -42,4 +45,25 @@ def display_result(request, search_type, gene):
             "gene": gene,
             "records": ans
         }
+    )
+
+
+@login_required(login_url='/accounts/login/')
+def history(request):
+    user_queries = UserData.objects.filter(user=request.user).order_by('-id')
+
+    unique_queries = []
+    seen = set()
+
+    for query in user_queries:
+        query_key = (query.search_type, query.gene)
+
+        if query_key not in seen:
+            unique_queries.append(query)
+            seen.add(query_key)
+
+    return render(
+        request,
+        "monitoring/history.html",
+        {"username": request.user.username, "queries": unique_queries}
     )
