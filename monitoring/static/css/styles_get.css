@@ -10,15 +10,22 @@ html, body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: flex-start; /* Центрирование по вертикали */
+    justify-content: center;
     height: 100vh;
     width: 100%;
     background: #f2f2f2;
-    padding-top: 40px;
 }
 ::selection{
   background: #4158d0;
   color: #fff;
+}
+.main-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    transform: translateY(-10%);
+    overflow: visible;
 }
 .wrapper{
   width: 380px;
@@ -69,6 +76,7 @@ form .field input:valid{
   pointer-events: none;
   transform: translateY(-50%);
   transition: all 0.3s ease;
+
 }
 form .field input:focus ~ label,
 form .field input:valid ~ label{
@@ -102,22 +110,42 @@ form .content label{
   padding-left: 5px;
 }
 
-/* Общий стиль для полей */
-.wrapper form .field select {
-  height: 100%;
-  width: 100%;
-  color: #999999;
-  outline: none;
-  font-size: 17px;
-  padding-left: 20px;
-  border: 1px solid lightgrey;
-  border-radius: 25px;
-  transition: all 0.3s ease;
-  background: white;
-  appearance: none;
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  cursor: pointer;
+.wrapper form .field-search {
+    position: relative;
+}
+
+
+.wrapper form .field-search select {
+    height: 100%;
+    width: 100%;
+    color: #999999;
+    outline: none;
+    font-size: 17px;
+    padding: 12px 40px 12px 20px;
+    border: 1px solid lightgrey;
+    border-radius: 25px;
+    transition: all 0.3s ease;
+    background: white;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    cursor: pointer;
+}
+
+
+.wrapper form .field-search::after {
+    content: "▼";
+    font-size: 14px;
+    font-weight: bold;
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+    background: linear-gradient(to right, #283c86, #45a247);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    transition: transform 0.3s ease;
 }
 
 form .content .pass-link{
@@ -151,10 +179,12 @@ form .pass-link a:hover,
 form .signup-link a:hover{
   text-decoration: underline;
 }
+
 .user-greeting {
     text-align: center;
     font-size: 18px;
     font-weight: bold;
+    margin-bottom: 10px;
 }
 
 .user-greeting h2{
@@ -164,13 +194,12 @@ form .signup-link a:hover{
     font-weight: bold;
 }
 
-/* Общие стили для навигации */
+
 .nav-buttons {
     display: flex;
     justify-content: center;
     gap: 15px;
-    margin-bottom: 30px;
-    margin-top: 20px;
+    margin-bottom: 20px;
 }
 
 /* Кнопки */

@@ -17,28 +17,30 @@
     <a href="{% url 'logout' %}" class="btn-nav">Logout</a>
 </nav>
 <div class="wrapper">
-    <div class="title">Monitoring Mutations</div>
     {% load static %}
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
 
-    <table border="1">
+    <div class="table-container">
+    <table>
         <thead>
-        <tr>
-            {% for column in records.0.keys %}
-            <th>{{ column }}</th>
-            {% endfor %}
-        </tr>
+            <tr>
+                {% for column in records.0.keys %}
+                <th>{{ column }}</th>
+                {% endfor %}
+            </tr>
         </thead>
         <tbody>
-        {% for row in records %}
-        <tr>
-            {% for value in row.values %}
-            <td>{{ value }}</td>
+            {% for row in records %}
+            <tr>
+                {% for value in row.values %}
+                <td>{{ value }}</td>
+                {% endfor %}
+            </tr>
             {% endfor %}
-        </tr>
-        {% endfor %}
         </tbody>
     </table>
+</div>
+
 
 </div>
 </body>

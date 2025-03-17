@@ -8,34 +8,38 @@
 </head>
 
 <body>
-<div class="user-greeting">
-    <h2>Hello, {{ name }}</h2>
-</div>
-<nav class="nav-buttons">
-    <a href="{% url 'get_data' %}" class="btn-nav">Search</a>
-    <a href="{% url 'display_last' %}" class="btn-nav">Display</a>
-    <a href="{% url 'logout' %}" class="btn-nav">Logout</a>
-</nav>
-<div class="wrapper">
-    <div class="title">Monitoring Mutations</div>
+<div class="main-container">
+    <div class="user-greeting">
+        <h2>Hello, {{ name }}</h2>
+    </div>
+    <nav class="nav-buttons">
+        <a href="{% url 'get_data' %}" class="btn-nav">Search</a>
+        <a href="{% url 'display_last' %}" class="btn-nav">Display</a>
+        <a href="{% url 'logout' %}" class="btn-nav">Logout</a>
+    </nav>
+    <div class="wrapper">
+        <div class="title">Monitoring Mutations</div>
 
-    <form method="post" action="">
+        <form method="post" action="">
 
-        {% csrf_token %}
-        <div class="field">
-            {{ form.search_type }}
-        </div>
+            {% csrf_token %}
+            <div class="field-search">
+                {{ form.search_type }}
+            </div>
 
-        <div class="field">
-            {{ form.gene }}
-            <label>{{ form.gene.label }}</label>
-        </div>
+            <div class="field">
+                {{ form.gene }}
+                <label>{{ form.gene.label }}</label>
+            </div>
 
-        <div class="field">
-            <input type="submit" value="Submit">
-        </div>
-    </form>
+            <div class="field">
+                <input type="submit" value="Submit">
+            </div>
+        </form>
+    </div>
 
+    <script src="{% static 'js/script.js' %}"></script>
 </div>
 </body>
+
 </html>
