@@ -15,13 +15,14 @@
 </head>
 
 <body>
+<a href="{% url 'logout' %}">Logout</a>
 <div class="user-greeting">
     <h2>Hello, {{ username }}</h2>
 </div>
 <nav class="nav-buttons">
     <a href="{% url 'get_data' %}" class="btn-nav">Search</a>
-    <a href="{% url 'display_last' %}" class="btn-nav">Display</a>
-    <a href="{% url 'logout' %}" class="btn-nav">Logout</a>
+    <a href="{% url 'display_last' %}" class="btn-nav">Display last</a>
+    <a href="{% url 'history' %}" class="btn-nav">History</a>
 </nav>
 <div class="wrapper">
     {% load static %}
@@ -59,6 +60,7 @@
             "info": true,           // Показ информации о количестве записей
         });
     });
+
 
 </script>
 </body>
