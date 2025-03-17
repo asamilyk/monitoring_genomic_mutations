@@ -2,9 +2,16 @@
 <html lang="en" dir="ltr">
 <head>
     <meta charset="utf-8">
-    <title>Login Form</title>
+    <title>Display</title>
     {% load static %}
     <link rel="stylesheet" href="{% static 'css/styles_display.css' %}">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.3/css/jquery.dataTables.min.css">
+
+    <script type="text/javascript" charset="utf8" src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script type="text/javascript" charset="utf8"
+            src="https://cdn.datatables.net/1.11.3/js/jquery.dataTables.min.js"></script>
+
 </head>
 
 <body>
@@ -21,15 +28,15 @@
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
 
     <div class="table-container">
-    <table>
-        <thead>
+        <table>
+            <thead>
             <tr>
                 {% for column in records.0.keys %}
                 <th>{{ column }}</th>
                 {% endfor %}
             </tr>
-        </thead>
-        <tbody>
+            </thead>
+            <tbody>
             {% for row in records %}
             <tr>
                 {% for value in row.values %}
@@ -37,11 +44,22 @@
                 {% endfor %}
             </tr>
             {% endfor %}
-        </tbody>
-    </table>
-</div>
+            </tbody>
+        </table>
+    </div>
 
 
 </div>
+<script>
+    $(document).ready( function () {
+        $('table').DataTable({
+            "paging": true,         // Пагинация
+            "searching": true,      // Поиск
+            "ordering": true,       // Сортировка
+            "info": true,           // Показ информации о количестве записей
+        });
+    });
+
+</script>
 </body>
 </html>

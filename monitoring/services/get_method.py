@@ -14,7 +14,7 @@ def get_data(search_type, gene):
         SELECT * 
         FROM crd_dmt.data_vcf 
         WHERE CAST(pos AS TEXT) LIKE '{gene}%'
-        LIMIT 10
+        LIMIT 1000
     """
     df = DB_CONN.read_sql(query)
     return df.to_dict(orient="records")
