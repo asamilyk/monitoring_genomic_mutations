@@ -5,12 +5,14 @@
     <title>Display</title>
     {% load static %}
     <link rel="stylesheet" href="{% static 'css/styles_display.css' %}">
-    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.3/css/jquery.dataTables.min.css">
+    <!-- jQuery (обязателен для работы фильтра) -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-    <script type="text/javascript" charset="utf8" src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- CSS плагина -->
+    <link rel="stylesheet" href="{% static 'css/excel-bootstrap-table-filter-style.css' %}">
 
-    <script type="text/javascript" charset="utf8"
-            src="https://cdn.datatables.net/1.11.3/js/jquery.dataTables.min.js"></script>
+    <!-- JS плагина -->
+    <script src="{% static 'js/excel-bootstrap-table-filter-bundle.js' %}"></script>
 
 </head>
 
@@ -25,43 +27,42 @@
     <a href="{% url 'history' %}" class="btn-nav">History</a>
 </nav>
 <div class="wrapper">
-    {% load static %}
-    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <div class="container mt-4">
+        <div class="table-responsive">
+            <table id="myTable" class="table table-striped table-bordered">
+                <thead>
+                <tr>
+                    {% for column in records.0.keys %}
+                    <th>{{ column }}</th> <!-- Заголовки -->
+                    {% endfor %}
+                </tr>
+                </thead>
+                <tbody>
+                {% for row in records %}
+                <tr>
+                    {% for value in row.values %}
+                    <td>{{ value }}</td> <!-- Данные -->
+                    {% endfor %}
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
 
-    <div class="table-container">
-        <table>
-            <thead>
-            <tr>
-                {% for column in records.0.keys %}
-                <th>{{ column }}</th>
-                {% endfor %}
-            </tr>
-            </thead>
-            <tbody>
-            {% for row in records %}
-            <tr>
-                {% for value in row.values %}
-                <td>{{ value }}</td>
-                {% endfor %}
-            </tr>
-            {% endfor %}
-            </tbody>
-        </table>
+        </div>
     </div>
-
-
 </div>
 <script>
-    $(document).ready( function () {
-        $('table').DataTable({
-            "paging": true,         // Пагинация
-            "searching": true,      // Поиск
-            "ordering": true,       // Сортировка
-            "info": true,           // Показ информации о количестве записей
-        });
+
+    $(document).ready(function () {
+        $('#myTable').excelTableFilter(); // Только Excel Bootstrap Filter
     });
+
+
+
+
 
 
 </script>
 </body>
+
 </html>

@@ -32,7 +32,6 @@ def display_last(request):
 def display_result(request, search_type, gene):
     UserData.objects.create(user=request.user, search_type=search_type, gene=gene)
     global ans
-    ans = 0
     if not ans:
         records = get_data(search_type, gene)
         ans = records

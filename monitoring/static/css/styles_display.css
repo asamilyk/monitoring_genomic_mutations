@@ -217,14 +217,31 @@ th, td {
     text-overflow: ellipsis; /* Добавляем ... для длинных текстов */
 }
 
-/* Заголовки таблицы */
+/* Разрешаем выпадающим спискам выходить за пределы заголовков */
 th {
-    background: #387662;
+ background: #387662;
     color: white;
     font-weight: bold;
-    text-align: center;
-    padding: 10px;
+    position: relative; /* Чтобы dropdowns корректно позиционировались */
+    overflow: visible !important; /* Даем возможность раскрыться списку */
+    white-space: nowrap;
 }
+
+/* Исправляем высоту фильтра */
+th select {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 1000; /* Выставляем поверх таблицы */
+    background: white;
+    border: 1px solid #ccc;
+}
+
+/* Увеличиваем z-index у фильтров, чтобы они были видимыми */
+.excel-bootstrap-table-filter {
+    z-index: 2000 !important;
+}
+
 tr:nth-child(even) td {
     background: white;
 }
