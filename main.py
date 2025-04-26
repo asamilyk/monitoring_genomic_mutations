@@ -42,10 +42,11 @@ class pgsql_conn(object):
                 self.connection.commit()
 
 conn = pgsql_conn('127.0.0.1',
-                  5433,
+                  5432,
                   'cardio',
-                  'apsamilyk',
-                  '0502hsecardio2025')
+                  'postgres',
+                  'qtFU39PydEccPdyK')
+print("11")
 
 df = conn.read_sql(f''' 
 SELECT  

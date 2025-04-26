@@ -24,7 +24,8 @@ SECRET_KEY = 'django-insecure-znx&=4%$2!8)%!3d+wgb&%np5zhv=6^#p3p!m%=0@pygn%-*m8
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['158.160.20.62', 'localhost', '127.0.0.1']
+
 
 # Application definition
 
@@ -123,7 +124,7 @@ SESSION_COOKIE_AGE = 60 * 60 * 24 * 30  # 30 дней
 SESSION_EXPIRE_AT_BROWSER_CLOSE = False
 
 REMOTE_DB_HOST = '127.0.0.1'
-REMOTE_DB_PORT = 5433
+REMOTE_DB_PORT = 5432
 REMOTE_DB_NAME = 'cardio'
-REMOTE_DB_USER = 'apsamilyk'
-REMOTE_DB_PASSWORD = '0502hsecardio2025'
+REMOTE_DB_USER = 'postgres'
+REMOTE_DB_PASSWORD = 'qtFU39PydEccPdyK'
