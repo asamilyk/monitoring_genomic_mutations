@@ -1,14 +1,30 @@
-from django.contrib.auth.views import LoginView
+from django.shortcuts import render, redirect
+from django.contrib.auth import authenticate, login, logout
+from django.contrib import messages
+from django.urls import reverse
 
-from user.forms import LoginForm
+def login_view(request):
+    if request.user.is_authenticated:
+        return redirect(reverse('genomic_app:data_table'))
+        
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        
+        user = authenticate(request, username=username, password=password)
+        
+        if user is not None:
+            login(request, user)
+            next_url = request.GET.get('next')
+            if next_url:
+                return redirect(next_url)
+            return redirect(reverse('genomic_app:data_table'))
+        else:
+            messages.error(request, 'Invalid username or password')
+    
+    return render(request, 'user/login.html')
 
 
-class UpdatedLoginView(LoginView):
-    form_class = LoginForm
-
-    def form_valid(self, form):
-        remember_me = form.cleaned_data.get('remember_me')
-        if not remember_me:
-            self.request.session.set_expiry(0)
-            self.request.session.modified = True
-        return super().form_valid(form)
+def logout_view(request):
+    logout(request)
+    return redirect('login')

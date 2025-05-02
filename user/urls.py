@@ -1,6 +1,7 @@
 from django.urls import path
-from .views import UpdatedLoginView
+from . import views
+
+app_name = 'user'
 
 urlpatterns = [
-    path('login/', UpdatedLoginView.as_view(), name='login'),  # Заменяем стандартный login
 ]
