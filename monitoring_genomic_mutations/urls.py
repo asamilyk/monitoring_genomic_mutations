@@ -1,16 +1,11 @@
 from django.contrib import admin
-from django.urls import include
-from django.urls import path
+from django.urls import include, path
 from django.views.generic import RedirectView
-from django.conf import settings
-from django.conf.urls.static import static
+from django.contrib.auth.decorators import login_required
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('monitoring/', include('monitoring.urls')),
-    path('accounts/', include('user.urls')),
     path('accounts/', include('django.contrib.auth.urls')),
-    path('', RedirectView.as_view(url='/monitoring/', permanent=True)),
+    path('genomic_data/', include('genomic_app.urls', namespace='genomic_app')),
+    path('', login_required(RedirectView.as_view(url='/genomic_data/data/')), name='index'),
 ]
-
-urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

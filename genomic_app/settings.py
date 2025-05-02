@@ -128,7 +128,7 @@ STATICFILES_DIRS = [
 ]
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 LOGIN_URL = '/accounts/login/'
-LOGIN_REDIRECT_URL = '/genomic_data/data/'
+LOGIN_REDIRECT_URL = '/genomic_app/data/'
 LOGOUT_REDIRECT_URL = '/accounts/login/'
 
 

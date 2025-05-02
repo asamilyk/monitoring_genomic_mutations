@@ -1,0 +1,90 @@
+{% extends 'base.html' %}
+{% load django_tables2 %}
+{% load static %}
+
+{% block title %}Genomic Data Explorer{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-3">
+    <h1>Genomic Data Explorer</h1>
+    
+    <!-- Кнопка для открытия/скрытия фильтров -->
+    <button class="btn btn-primary mb-3" type="button" data-toggle="collapse" data-target="#filtersCollapse" 
+            aria-expanded="false" aria-controls="filtersCollapse">
+        Show Filters
+    </button>
+    
+    <!-- Блок с фильтрами (изначально скрыт) -->
+    <div class="collapse mb-4" id="filtersCollapse">
+        <div class="card card-body">
+            <form method="get" class="form">
+                <div class="row">
+                    {% for field in filter.form %}
+                        <div class="col-md-3 mb-3">
+                            <div class="form-group">
+                                {{ field.label_tag }}
+                                {{ field }}
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+                <button type="submit" class="btn btn-primary">Apply Filters</button>
+                <a href="{% url 'genomic_app:data_table' %}" class="btn btn-outline-secondary">Clear Filters</a>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Информация о найденных записях -->
+    <div class="alert alert-info">
+        Found <strong>{{ total_records }}</strong> records matching your criteria.
+        {% if limited_view %}
+        <small class="text-muted">(Showing maximum of 100 records for performance reasons)</small>
+        {% endif %}
+    </div>
+    
+    <!-- Таблица с данными -->
+    <div class="table-responsive">
+        {% render_table table %}
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    $(document).ready(function() {
+        // Подсветка строки при наведении
+        $('table tr').hover(
+            function() { $(this).addClass('bg-light'); },
+            function() { $(this).removeClass('bg-light'); }
+        );
+        
+        // Toggle текста кнопки фильтров
+        $('[data-target="#filtersCollapse"]').click(function() {
+            if ($('#filtersCollapse').hasClass('show')) {
+                $(this).text('Show Filters');
+            } else {
+                $(this).text('Hide Filters');
+            }
+        });
+        
+        // Показываем фильтры если они активны
+        var hasFilters = false;
+        var queryString = window.location.search;
+        
+        if (queryString) {
+            var urlParams = new URLSearchParams(queryString);
+            urlParams.forEach(function(value, key) {
+                if (key !== 'page' && value.trim() !== '') {
+                    hasFilters = true;
+                }
+            });
+        }
+        
+        if (hasFilters) {
+            $('#filtersCollapse').addClass('show');
+            $('[data-target="#filtersCollapse"]').text('Hide Filters');
+        }
+    });
+</script>
+{% endblock %}
