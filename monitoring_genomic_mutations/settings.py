@@ -144,3 +144,27 @@ REMOTE_DB_PORT = 5432
 REMOTE_DB_NAME = 'cardio'
 REMOTE_DB_USER = 'postgres'
 REMOTE_DB_PASSWORD = 'qtFU39PydEccPdyK'
+
+# settings.py - временно включите логирование запросов
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'loggers': {
+        'django.db.backends': {
+            'level': 'DEBUG',
+            'handlers': ['console'],
+        }
+    }
+}
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+    }
+}
+

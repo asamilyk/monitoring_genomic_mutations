@@ -1,89 +1,181 @@
 {% extends 'base.html' %}
-{% load django_tables2 %}
-{% load static %}
 
-{% block title %}Genomic Data Explorer{% endblock %}
+{% block title %}Data table{% endblock %}
 
 {% block content %}
-<div class="container-fluid mt-3">
-    <h1>Genomic Data Explorer</h1>
+<div>
+    <div class="d-flex justify-content-between mb-3">
+        <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#filtersCollapse" 
+                aria-expanded="false" aria-controls="filtersCollapse">
+            Show/Hide filters
+        </button>
+        
+        <div class="dropdown">
+            <button class="btn btn-secondary dropdown-toggle" type="button" id="exportDropdown" 
+                    data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Export
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="exportDropdown">
+                <li><a class="dropdown-item" href="#">CSV</a></li>
+                <li><a class="dropdown-item" href="#">Excel</a></li>
+            </ul>
+        </div>
+    </div>
     
-    <!-- Кнопка для открытия/скрытия фильтров -->
-    <button class="btn btn-primary mb-3" type="button" data-toggle="collapse" data-target="#filtersCollapse" 
-            aria-expanded="false" aria-controls="filtersCollapse">
-        Show Filters
-    </button>
-    
-    <!-- Блок с фильтрами (изначально скрыт) -->
     <div class="collapse mb-4" id="filtersCollapse">
         <div class="card card-body">
-            <form method="get" class="form">
+            <form method="get" id="filter-form" class="form">
                 <div class="row">
-                    {% for field in filter.form %}
-                        <div class="col-md-3 mb-3">
-                            <div class="form-group">
-                                {{ field.label_tag }}
+                    {% for field in form %}
+                        {% if field.name != 'qual_op' and field.name != 'qual_value' %}
+                            <div class="col-md-3 mb-3">
+                                <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}:</label>
+                                {{ field.errors }}
                                 {{ field }}
                             </div>
-                        </div>
+                        {% endif %}
                     {% endfor %}
+                    
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Qual:</label>
+                        <div class="input-group">
+                            {{ form.qual_op }}
+                            {{ form.qual_value }}
+                        </div>
+                        {% if form.qual_op.errors or form.qual_value.errors %}
+                            <div class="invalid-feedback d-block">
+                                {{ form.qual_op.errors }}
+                                {{ form.qual_value.errors }}
+                            </div>
+                        {% endif %}
+                    </div>
                 </div>
-                <button type="submit" class="btn btn-primary">Apply Filters</button>
-                <a href="{% url 'genomic_app:data_table' %}" class="btn btn-outline-secondary">Clear Filters</a>
+                
+                <div class="d-flex justify-content-between">
+                    <button type="submit" class="btn btn-primary">Применить фильтры</button>
+                    <a href="{% url 'genomic_app:data_table' %}" class="btn btn-outline-secondary">Сбросить фильтры</a>
+                </div>
             </form>
         </div>
     </div>
     
-    <!-- Информация о найденных записях -->
-    <div class="alert alert-info">
-        Found <strong>{{ total_records }}</strong> records matching your criteria.
-        {% if limited_view %}
-        <small class="text-muted">(Showing maximum of 100 records for performance reasons)</small>
-        {% endif %}
+    <div class="alert alert-info mb-3">
+        Найдено <strong>{{ filtered_count }}</strong> записей, соответствующих вашим критериям (всего: {{ total_count }})
     </div>
     
-    <!-- Таблица с данными -->
-    <div class="table-responsive">
-        {% render_table table %}
+    <div class="table-responsive-xl">
+        <table class="table table-striped table-bordered table-hover">
+            <thead class="table-dark">
+                <tr>
+                    <th>Row ID</th>
+                    <th>ID</th>
+                    <th>Orig ID</th>
+                    <th>Хромосома</th>
+                    <th>Позиция</th>
+                    <th>Ref</th>
+                    <th>Alt</th>
+                    <th>Qual</th>
+                    <th>Аннотация</th>
+                    <th>Gene ID</th>
+                    <th>Gene Name</th>
+                    <th>Feature ID</th>
+                    <th>Feature Type</th>
+                    <th>Transcript Biotype</th>
+                    <th>HGVS C</th>
+                    <th>Код заболевания</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if records %}
+                    {% for record in records %}
+                    <tr>
+                        <td>{{ record.row_id }}</td>
+                        <td>{{ record.id }}</td>
+                        <td>{{ record.orig_id }}</td>
+                        <td>{{ record.chrom }}</td>
+                        <td>{{ record.pos }}</td>
+                        <td>{{ record.ref }}</td>
+                        <td>{{ record.alt }}</td>
+                        <td>{{ record.qual }}</td>
+                        <td>{{ record.annotation }}</td>
+                        <td>{{ record.gene_id }}</td>
+                        <td>{{ record.gene_name }}</td>
+                        <td>{{ record.feature_id }}</td>
+                        <td>{{ record.feature_type }}</td>
+                        <td>{{ record.transcript_biotype }}</td>
+                        <td>{{ record.hgvs_c }}</td>
+                        <td>{{ record.disease_code }}</td>
+                    </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr>
+                        <td colspan="16" class="text-center">Данные не найдены</td>
+                    </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="d-flex justify-content-between align-items-center mt-3">
+     
+        
+        <nav aria-label="Page navigation">
+            <ul class="pagination">
+                {% if has_prev %}
+                    <li class="page-item">
+                        <a class="page-link" href="?last_row_id={{ first_record_row_id }}&direction=prev{% for key, value in request.GET.items %}{% if key != 'last_row_id' and key != 'direction' %}&{{ key }}={{ value|urlencode }}{% endif %}{% endfor %}">
+                            &laquo; Prev
+                        </a>
+                    </li>
+                {% else %}
+                    <li class="page-item disabled">
+                        <span class="page-link">&laquo; Prev</span>
+                    </li>
+                {% endif %}
+                
+                {% if has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?last_row_id={{ last_record_row_id }}&direction=next{% for key, value in request.GET.items %}{% if key != 'last_row_id' and key != 'direction' %}&{{ key }}={{ value|urlencode }}{% endif %}{% endfor %}">
+                            Next &raquo;
+                        </a>
+                    </li>
+                {% else %}
+                    <li class="page-item disabled">
+                        <span class="page-link">Next &raquo;</span>
+                    </li>
+                {% endif %}
+            </ul>
+        </nav>
     </div>
 </div>
-
 {% endblock %}
 
 {% block extra_js %}
 <script>
     $(document).ready(function() {
-        // Подсветка строки при наведении
         $('table tr').hover(
             function() { $(this).addClass('bg-light'); },
             function() { $(this).removeClass('bg-light'); }
         );
         
-        // Toggle текста кнопки фильтров
-        $('[data-target="#filtersCollapse"]').click(function() {
-            if ($('#filtersCollapse').hasClass('show')) {
-                $(this).text('Show Filters');
-            } else {
-                $(this).text('Hide Filters');
-            }
+        $('#filter-form').submit(function() {
+            const hiddenInput = document.createElement('input');
+            hiddenInput.type = 'hidden';
+            hiddenInput.name = 'last_row_id';
+            hiddenInput.value = '';
+            this.appendChild(hiddenInput);
+            
+            return true;
         });
         
-        // Показываем фильтры если они активны
-        var hasFilters = false;
-        var queryString = window.location.search;
+        $('#filter-form select').addClass('form-select');
+        $('#filter-form input[type="number"]').addClass('form-control');
         
-        if (queryString) {
-            var urlParams = new URLSearchParams(queryString);
-            urlParams.forEach(function(value, key) {
-                if (key !== 'page' && value.trim() !== '') {
-                    hasFilters = true;
-                }
-            });
-        }
+        $('#id_qual_op').css('min-width', '80px');
+        $('#id_qual_value').css('flex', '1');
         
-        if (hasFilters) {
+        if (window.location.search) {
             $('#filtersCollapse').addClass('show');
-            $('[data-target="#filtersCollapse"]').text('Hide Filters');
         }
     });
 </script>
