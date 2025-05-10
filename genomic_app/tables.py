@@ -1,3 +1,4 @@
+# genomic_app/tables.py
 import django_tables2 as tables
 from .models import DataVcf
 
