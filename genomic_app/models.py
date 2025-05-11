@@ -20,7 +20,7 @@ class DataVcf(models.Model):
 
     class Meta:
         managed = True
-        db_table = 'crd_dmt\".\"data_vcf_new_2'
+        db_table = 'crd_dmt\".\"data_vcf_4'
         app_label = 'genomic_app'  
         
     def __str__(self):

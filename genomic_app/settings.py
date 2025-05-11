@@ -90,6 +90,17 @@ DATABASES = {
 
 DATABASE_ROUTERS = []
 
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION': 'unique-snowflake',
+        'TIMEOUT': 3600,  
+        'OPTIONS': {
+            'MAX_ENTRIES': 1000,  
+        }
+    }
+}
+
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
 
