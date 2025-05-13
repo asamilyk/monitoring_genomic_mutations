@@ -7,5 +7,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('accounts/', include('django.contrib.auth.urls')),
     path('genomic_data/', include('genomic_app.urls', namespace='genomic_app')),
+    path('user/', include('user.urls', namespace='user')),
     path('', login_required(RedirectView.as_view(url='/genomic_data/data/')), name='index'),
 ]
