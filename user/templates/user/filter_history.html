@@ -1,0 +1,203 @@
+{% extends 'base.html' %}
+
+{% block title %}История фильтров{% endblock %}
+
+{% block extra_css %}
+<style>
+    .filter-history-card {
+        transition: all 0.2s ease;
+        border-left: 4px solid #6c757d;
+    }
+    
+    .filter-history-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0,0,0,.1);
+        border-left-color: #0d6efd;
+    }
+    
+    .filter-actions {
+        display: flex;
+        gap: 0.5rem;
+    }
+    
+    .filter-timestamp {
+        font-size: 0.85rem;
+        color: #6c757d;
+    }
+    
+    .filter-description {
+        margin-top: 0.5rem;
+        font-size: 0.9rem;
+        color: #495057;
+    }
+    
+    .no-filters-message {
+        padding: 3rem;
+        text-align: center;
+        background-color: #f8f9fa;
+        border-radius: 8px;
+    }
+    
+    .no-filters-message i {
+        font-size: 3rem;
+        color: #adb5bd;
+        margin-bottom: 1rem;
+    }
+    
+    .filter-badge {
+        display: inline-block;
+        padding: 0.25rem 0.5rem;
+        margin-right: 0.25rem;
+        margin-bottom: 0.25rem;
+        border-radius: 4px;
+        background-color: #e9ecef;
+        font-size: 0.85rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="mb-0">История фильтров</h1>
+        <a href="{% url 'genomic_app:data_table' %}" class="btn btn-primary">
+            <i class="bi bi-arrow-left"></i> Вернуться к таблице
+        </a>
+    </div>
+    
+    {% if messages %}
+        <div class="messages mb-4">
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+    
+    
+    {% if history %}
+        <div class="row">
+            {% for filter in history %}
+                <div class="col-md-6 mb-4">
+                    <div class="card filter-history-card h-100">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <h5 class="card-title">
+                                    {{ filter.filter_name|default:"Безымянный фильтр" }}
+                                </h5>
+                                <span class="filter-timestamp">
+                                    {{ filter.created_at|date:"d.m.Y H:i" }}
+                                </span>
+                            </div>
+                            
+                            <div class="filter-description">
+                                {{ filter.get_filter_description }}
+                            </div>
+                            
+                            <div class="filter-params mt-3">
+                                {% for key, value in filter.get_filter_params.items %}
+                                    {% if key != 'page' and key != 'last_row_id' and key != 'direction' %}
+                                        <span class="filter-badge">
+                                            {{ key }}: {{ value }}
+                                        </span>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                        </div>
+                        <div class="card-footer bg-transparent">
+                            <div class="filter-actions">
+                                <a href="{{ filter.get_filter_url }}" class="btn btn-primary btn-sm">
+                                    <i class="bi bi-filter"></i> Применить
+                                </a>
+                                <button type="button" class="btn btn-outline-danger btn-sm delete-filter" data-filter-id="{{ filter.id }}">
+    <i class="bi bi-trash"></i> Удалить
+</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="no-filters-message">
+            <i class="bi bi-filter"></i>
+            <h3>История фильтров пуста</h3>
+            <p class="text-muted">
+                Здесь будут сохраняться примененные вами фильтры. 
+                Вернитесь на страницу данных и сохраните фильтр.
+            </p>
+            <a href="{% url 'genomic_app:data_table' %}" class="btn btn-primary mt-3">
+                Перейти к таблице данных
+            </a>
+        </div>
+    {% endif %}
+</div>
+<div class="modal fade" id="deleteFilterModal" tabindex="-1" aria-labelledby="deleteFilterModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteFilterModalLabel">Подтверждение удаления</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Вы уверены, что хотите удалить этот фильтр?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                <form id="deleteFilterForm" method="post" action="">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">Удалить</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    $(document).ready(function() {
+        $('.delete-filter').on('click', function() {
+            const filterId = $(this).data('filter-id');
+            console.log('Клик по кнопке удаления фильтра с ID:', filterId);
+            
+            const deleteUrl = "{% url 'user:delete_filter' 999999 %}".replace('999999', filterId);
+            
+            $('#deleteFilterForm').attr('action', deleteUrl);
+            
+            $('#deleteFilterModal').modal('show');
+        });
+        
+        $('#deleteFilterForm').on('submit', function(e) {
+            e.preventDefault();
+            
+            $.ajax({
+                url: $(this).attr('action'),
+                type: 'POST',
+                data: $(this).serialize(),
+                success: function(response) {
+                    $('#deleteFilterModal').modal('hide');
+
+                    const filterId = $('#deleteFilterForm').attr('action').match(/\d+/)[0];
+                    $(`[data-filter-id="${filterId}"]`).closest('.col-md-6').fadeOut(300, function() {
+                        $(this).remove();
+                        
+                        if ($('.filter-card').length === 0) {
+                            location.reload();
+                        }
+                    });
+                },
+                error: function(xhr, status, error) {
+                    console.error('Ошибка при удалении фильтра:', error);
+                    alert('Произошла ошибка при удалении фильтра. Пожалуйста, попробуйте еще раз.');
+                    $('#deleteFilterModal').modal('hide');
+                }
+            });
+        });
+        
+    });
+</script>
+{% endblock %}

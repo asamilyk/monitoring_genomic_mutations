@@ -13,24 +13,43 @@
         width: 100%;
         overflow-x: auto;
     }
-    
+
     .table {
         width: 100%;
         table-layout: fixed;
     }
-    
-    .table th.col-id, .table td.col-id { width: 60px; min-width: 60px; }
-    .table th.col-small, .table td.col-small { width: 80px; min-width: 80px; }
-    .table th.col-medium, .table td.col-medium { width: 120px; min-width: 120px; }
-    .table th.col-large, .table td.col-large { width: 160px; min-width: 160px; }
 
-    .table th, .table td {
+    .table th.col-id,
+    .table td.col-id {
+        width: 60px;
+        min-width: 60px;
+    }
+
+    .table th.col-small,
+    .table td.col-small {
+        width: 80px;
+        min-width: 80px;
+    }
+
+    .table th.col-medium,
+    .table td.col-medium {
+        width: 120px;
+        min-width: 120px;
+    }
+
+    .table th.col-large,
+    .table td.col-large {
+        width: 160px;
+        min-width: 160px;
+    }
+
+    .table th,
+    .table td {
         word-wrap: break-word;
         white-space: normal;
         max-width: 200px;
         vertical-align: middle;
     }
-    
 
     .table td.cell-truncate {
         max-width: 200px;
@@ -38,62 +57,62 @@
         text-overflow: ellipsis;
         white-space: nowrap;
     }
-    
+
     .table td.cell-truncate:hover {
         white-space: normal;
         overflow: visible;
         position: relative;
         z-index: 1;
         background-color: #f8f9fa;
-        box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         border-radius: 3px;
     }
-    
+
     .select2-container {
         width: 100% !important;
     }
-    
+
     .select2-container--bootstrap-5 .select2-selection {
         border: 1px solid #ced4da;
         border-radius: 0.25rem;
     }
-    
+
     .select2-container--bootstrap-5 .select2-selection--single {
         height: calc(1.5em + 0.75rem + 2px) !important;
         padding: 0.375rem 0.75rem;
     }
-    
+
     .select2-container--bootstrap-5 .select2-selection--single .select2-selection__arrow {
         height: calc(1.5em + 0.75rem + 2px) !important;
     }
-    
+
     .select2-container--bootstrap-5 .select2-selection--single .select2-selection__rendered {
         line-height: 1.5 !important;
         padding-left: 0;
     }
-    
+
     .filter-compact .form-label {
         font-weight: 600;
         margin-bottom: 0.25rem;
         font-size: 0.875rem;
     }
-    
+
     .filter-compact .form-group {
         margin-bottom: 0.75rem;
     }
-    
+
     .filter-card {
         border-radius: 8px;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
     }
-    
+
     .active-filters {
         display: flex;
         flex-wrap: wrap;
         gap: 0.5rem;
         margin-bottom: 1rem;
     }
-    
+
     .filter-badge {
         display: inline-flex;
         align-items: center;
@@ -102,349 +121,666 @@
         border-radius: 50px;
         font-size: 0.875rem;
     }
-    
+
     .filter-badge .close {
         margin-left: 0.5rem;
         font-size: 1.2rem;
         line-height: 0.8;
         cursor: pointer;
     }
+
+    .variant-combo-section {
+        margin-bottom: 1.5rem;
+        padding: 1rem;
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        border-left: 4px solid #0d6efd;
+    }
 </style>
 {% endblock %}
 
+
+
 {% block content %}
-<div class="container-fluid py-3">
-    <div class="row mb-3">
-        <div class="col-auto">
-            <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#filtersCollapse" 
-                    aria-expanded="false" aria-controls="filtersCollapse">
-                <i class="bi bi-funnel"></i> Фильтры
-            </button>
-        </div>
-        
-        <div class="col-auto">
-            <div class="dropdown">
-                <button class="btn btn-secondary dropdown-toggle" type="button" id="exportDropdown" 
-                        data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    <i class="bi bi-download"></i> Экспорт
-                </button>
-                <ul class="dropdown-menu" aria-labelledby="exportDropdown">
-                    <li>
-                        <a class="dropdown-item" href="?{% for key, value in request.GET.items %}{% if key != 'export' and key != 'page' %}{{ key }}={{ value }}&{% endif %}{% endfor %}export=csv">
-                            <i class="bi bi-filetype-csv"></i> CSV
-                        </a>
-                    </li>
-                    <li>
-                        <a class="dropdown-item" href="?{% for key, value in request.GET.items %}{% if key != 'export' and key != 'page' %}{{ key }}={{ value }}&{% endif %}{% endfor %}export=excel">
-                            <i class="bi bi-file-earmark-excel"></i> Excel
-                        </a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-        
-        <div class="col-md-6 ms-auto text-end">
-            <span class="badge bg-primary rounded-pill">{{ filtered_count }}</span> записей найдено (всего: {{ total_count }})
-        </div>
-    </div>
-    
-    {% if request.GET %}
-    <div class="active-filters mb-3">
-        {% for key, value in request.GET.items %}
-            {% if value and key != 'page' and key != 'last_row_id' and key != 'direction' and key != 'export' %}
-                <div class="filter-badge">
-                    <span>{{ key }}: {{ value }}</span>
-                    <a href="?{% for k, v in request.GET.items %}{% if k != key and k != 'page' and k != 'last_row_id' %}{{ k }}={{ v }}&{% endif %}{% endfor %}" class="close" aria-label="Close">&times;</a>
-                </div>
-            {% endif %}
-        {% endfor %}
-        
-        {% if request.GET %}
-            <div>
-                <a href="{{ request.path }}" class="btn btn-sm btn-outline-secondary">
-                    <i class="bi bi-arrow-counterclockwise"></i> Сбросить все
-                </a>
-            </div>
-        {% endif %}
+
+{% if request.GET %}
+<div>
+    {% for key, value in request.GET.items %}
+    {% if value and key != 'page' and key != 'last_row_id' and key != 'direction' and key != 'export' %}
+    <div>
+        <span>{{ key }}: {{ value }}</span>
+        <a href>&times;</a>
     </div>
     {% endif %}
+    {% endfor %}
+
+    {% if request.GET %}
+    <div>
+        <a href>
+            <i></i> Сбросить все
+        </a>
+    </div>
+    {% endif %}
+</div>
+{% endif %}
+{% if request.GET %}
+    <div>
+        <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#saveFilterModal">
+            <i></i> Сохранить фильтр
+        </button>
+    </div>
+{% endif %}
+<div>
+    <div>
+        <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#filtersCollapse"
+            aria-expanded="false" aria-controls="filtersCollapse">
+            <i></i> Фильтры
+        </button>
+
+        <div>
+            <button class="btn btn-secondary dropdown-toggle" type="button" id="exportDropdown"
+                data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i></i> Экспорт
+            </button>
+            <ul>
+                <li>
+                    <a href>
+                        <i></i> CSV
+                    </a>
+                </li>
+                <li>
+                    <a href>
+                        <i></i> Excel
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div>
+        <div>
+            <form method="get" id="filter-form" class="form filter-compact">
+                <div>
+                    <div>
+                        <div>
+                            <label for="{{ form.chrom.id_for_label }}" class="form-label">{{ form.chrom.label }}:</label>
+                            {{ form.chrom.errors }}
+                            {{ form.chrom }}
+                        </div>
+
+                        <div>
+                            <label for="{{ form.pos.id_for_label }}" class="form-label">{{ form.pos.label }}:</label>
+                            {{ form.pos.errors }}
+                            {{ form.pos }}
+                        </div>
+
+                        <div>
+                            <label for="{{ form.ref.id_for_label }}" class="form-label">{{ form.ref.label }}:</label>
+                            {{ form.ref.errors }}
+                            {{ form.ref }}
+                        </div>
+
+                        <div>
+                            <label for="{{ form.alt.id_for_label }}" class="form-label">{{ form.alt.label }}:</label>
+                            {{ form.alt.errors }}
+                            {{ form.alt }}
+                        </div>
+                    </div>
+
+                    <div>
+                        <div>
+                            <label for="{{ form.gene_name.id_for_label }}" class="form-label">{{ form.gene_name.label }}:</label>
+                            {{ form.gene_name.errors }}
+                            {{ form.gene_name }}
+                        </div>
+
+                        <div>
+                            <label for="{{ form.gene_id.id_for_label }}" class="form-label">{{ form.gene_id.label }}:</label>
+                            {{ form.gene_id.errors }}
+                            {{ form.gene_id }}
+                        </div>
+
+                        <div>
+                            <label for="{{ form.feature_id.id_for_label }}" class="form-label">{{ form.feature_id.label }}:</label>
+                            {{ form.feature_id.errors }}
+                            {{ form.feature_id }}
+                        </div>
+
+                        <div>
+                            <label for="{{ form.hgvs_c.id_for_label }}" class="form-label">{{ form.hgvs_c.label }}:</label>
+                            {{ form.hgvs_c.errors }}
+                            {{ form.hgvs_c }}
+                        </div>
+                    </div>
+
+                    <div>
+                        <div>
+                            <label for="{{ form.id.id_for_label }}" class="form-label">{{ form.id.label }}:</label>
+                            {{ form.id.errors }}
+                            {{ form.id }}
+                        </div>
+
+                        <div>
+                            <label for="{{ form.orig_id.id_for_label }}" class="form-label">{{ form.orig_id.label }}:</label>
+                            {{ form.orig_id.errors }}
+                            {{ form.orig_id }}
+                        </div>
+
+                        <div>
+                            <label for="{{ form.disease_code.id_for_label }}" class="form-label">{{form.disease_code.label }}:</label>
+                            {{ form.disease_code.errors }}
+                            {{ form.disease_code }}
+                        </div>
+
+                        <div>
+                            <label for="{{ form.annotation.id_for_label }}" class="form-label">{{ form.annotation.label }}:</label>
+                            {{ form.annotation.errors }}
+                            {{ form.annotation }}
+                        </div>
+                    </div>
+
+                    <div>
+                        <div>
+                            <label for="{{ form.feature_type.id_for_label }}" class="form-label">{{ form.feature_type.label }}:</label>
+                            {{ form.feature_type.errors }}
+                            {{ form.feature_type }}
+                        </div>
+
+                        <div>
+                            <label for="{{ form.transcript_biotype.id_for_label }}" class="form-label">{{ form.transcript_biotype.label }}:</label>
+                            {{ form.transcript_biotype.errors }}
+                            {{ form.transcript_biotype }}
+                        </div>
+
+                        <div>
+                            <label class="form-label">Qual:</label>
+                            <div>
+                                {{ form.qual_op }}
+                                {{ form.qual_value }}
+                            </div>
+                            {% if form.qual_op.errors or form.qual_value.errors %}
+                            <div>
+                                {{ form.qual_op.errors }}
+                                {{ form.qual_value.errors }}
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        <div>
+                            <button type="submit" class="btn btn-primary me-2">
+                                <i></i> Применить
+                            </button>
+                            <a href>
+                                <i></i> Сбросить
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+        <div>
+            <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#variantComboCollapse"
+                aria-expanded="false" aria-controls="variantComboCollapse">
+                <i></i> Поиск по группам
+            </button>
+        </div>
     
-    <div class="collapse {% if request.GET %}show{% endif %}" id="filtersCollapse">
-        <div class="card filter-card mb-4">
-            <div class="card-body filter-compact">
-                <form method="get" id="filter-form" class="form">
-                    <div class="row">
-                        <div class="col-md-3">
-                            <div class="form-group mb-3">
-                                <label for="{{ form.chrom.id_for_label }}" class="form-label">{{ form.chrom.label }}:</label>
-                                {{ form.chrom.errors }}
-                                {{ form.chrom }}
-                            </div>
-                            
-                            <div class="form-group mb-3">
-                                <label for="{{ form.gene_name.id_for_label }}" class="form-label">{{ form.gene_name.label }}:</label>
-                                {{ form.gene_name.errors }}
-                                {{ form.gene_name }}
-                            </div>
-                            
-                            <div class="form-group mb-3">
-                                <label for="{{ form.gene_id.id_for_label }}" class="form-label">{{ form.gene_id.label }}:</label>
-                                {{ form.gene_id.errors }}
-                                {{ form.gene_id }}
-                            </div>
+        <div>
+            <div>
+                <h5>Поиск вариантов по координатам</h5>
+                <form method="get" id="variant-combo-form" class="form">
+                    <div>
+                        <div>
+                            <label for="{{ form.variant_combo.id_for_label }}" class="form-label">Комбинация (chrom:pos
+                                ref>alt):</label>
+                            {{ form.variant_combo.errors }}
+                            {{ form.variant_combo }}
                         </div>
-                        
-                        <div class="col-md-3">
-                            <div class="form-group mb-3">
-                                <label for="{{ form.id.id_for_label }}" class="form-label">{{ form.id.label }}:</label>
-                                {{ form.id.errors }}
-                                {{ form.id }}
-                            </div>
-                            
-                            <div class="form-group mb-3">
-                                <label for="{{ form.orig_id.id_for_label }}" class="form-label">{{ form.orig_id.label }}:</label>
-                                {{ form.orig_id.errors }}
-                                {{ form.orig_id }}
-                            </div>
-                            
-                            <div class="form-group mb-3">
-                                <label for="{{ form.disease_code.id_for_label }}" class="form-label">{{ form.disease_code.label }}:</label>
-                                {{ form.disease_code.errors }}
-                                {{ form.disease_code }}
-                            </div>
-                        </div>
-                        
-                        <div class="col-md-3">
-                            <div class="form-group mb-3">
-                                <label for="{{ form.feature_type.id_for_label }}" class="form-label">{{ form.feature_type.label }}:</label>
-                                {{ form.feature_type.errors }}
-                                {{ form.feature_type }}
-                            </div>
-                            
-                            <div class="form-group mb-3">
-                                <label for="{{ form.transcript_biotype.id_for_label }}" class="form-label">{{ form.transcript_biotype.label }}:</label>
-                                {{ form.transcript_biotype.errors }}
-                                {{ form.transcript_biotype }}
-                            </div>
-                            
-                            <div class="form-group mb-3">
-                                <label for="{{ form.annotation.id_for_label }}" class="form-label">{{ form.annotation.label }}:</label>
-                                {{ form.annotation.errors }}
-                                {{ form.annotation }}
-                            </div>
-                        </div>
-                        
-                        <div class="col-md-3">
-                            <div class="form-group mb-3">
-                                <label class="form-label">Qual:</label>
-                                <div class="input-group">
-                                    {{ form.qual_op }}
-                                    {{ form.qual_value }}
-                                </div>
-                                {% if form.qual_op.errors or form.qual_value.errors %}
-                                    <div class="text-danger small">
-                                        {{ form.qual_op.errors }}
-                                        {{ form.qual_value.errors }}
-                                    </div>
-                                {% endif %}
-                            </div>
-                            
-                            <div class="d-flex justify-content-end mt-4">
-                                <button type="submit" class="btn btn-primary me-2">
-                                    <i class="bi bi-search"></i> Применить
-                                </button>
-                                <a href="{{ request.path }}" class="btn btn-outline-secondary">
-                                    <i class="bi bi-x-circle"></i> Сбросить
-                                </a>
-                            </div>
+                        <div>
+                            <button type="submit" class="btn btn-primary me-2">
+                                <i></i> Найти вариант
+                            </button>
+                            <button type="button" class="btn btn-outline-secondary" data-bs-toggle="collapse"
+                                data-bs-target="#variantComboCollapse">
+                                <i></i> Отмена
+                            </button>
                         </div>
                     </div>
                 </form>
             </div>
         </div>
-    </div>
     
-    <div class="table-wrap">
-        <table class="table table-striped table-bordered">
-            <thead class="table-dark">
+    <div>
+        <table>
+            <thead>
                 <tr>
-                    <th class="col-id">Row ID</th>
-                    <th class="col-medium">ID</th>
-                    <th class="col-medium">Orig ID</th>
-                    <th class="col-small">Хромосома</th>
-                    <th class="col-small">Позиция</th>
-                    <th class="col-small">Ref</th>
-                    <th class="col-small">Alt</th>
-                    <th class="col-small">Qual</th>
-                    <th class="col-large">Аннотация</th>
-                    <th class="col-medium">Gene ID</th>
-                    <th class="col-medium">Gene Name</th>
-                    <th class="col-medium">Feature ID</th>
-                    <th class="col-medium">Feature Type</th>
-                    <th class="col-medium">Transcript Biotype</th>
-                    <th class="col-large">HGVS C</th>
-                    <th class="col-medium">Код заболевания</th>
+                    <th>Row ID</th>
+                    <th>ID</th>
+                    <th>Orig ID</th>
+                    <th>Хромосома</th>
+                    <th>Позиция</th>
+                    <th>Ref</th>
+                    <th>Alt</th>
+                    <th>Qual</th>
+                    <th>Аннотация</th>
+                    <th>Gene ID</th>
+                    <th>Gene Name</th>
+                    <th>Feature ID</th>
+                    <th>Feature Type</th>
+                    <th>Transcript Biotype</th>
+                    <th>HGVS C</th>
+                    <th>Код заболевания</th>
                 </tr>
             </thead>
             <tbody>
                 {% if records %}
-                    {% for record in records %}
-                    <tr>
-                        <td class="col-id">{{ record.row_id }}</td>
-                        <td class="col-medium">{{ record.id }}</td>
-                        <td class="col-medium">{{ record.orig_id }}</td>
-                        <td class="col-small">{{ record.chrom }}</td>
-                        <td class="col-small">{{ record.pos }}</td>
-                        <td class="col-small">{{ record.ref }}</td>
-                        <td class="col-small">{{ record.alt }}</td>
-                        <td class="col-small">{{ record.qual }}</td>
-                        <td class="col-large {% if record.annotation|length > 50 %}cell-truncate{% endif %}">{{ record.annotation }}</td>
-                        <td class="col-medium">{{ record.gene_id }}</td>
-                        <td class="col-medium">{{ record.gene_name }}</td>
-                        <td class="col-medium">{{ record.feature_id }}</td>
-                        <td class="col-medium">{{ record.feature_type }}</td>
-                        <td class="col-medium">{{ record.transcript_biotype }}</td>
-                        <td class="col-large {% if record.hgvs_c|length > 50 %}cell-truncate{% endif %}">{{ record.hgvs_c }}</td>
-                        <td class="col-medium">{{ record.disease_code }}</td>
-                    </tr>
-                    {% endfor %}
+                {% for record in records %}
+                <tr>
+                    <td>{{ record.row_id }}</td>
+                    <td>{{ record.id }}</td>
+                    <td>{{ record.orig_id }}</td>
+                    <td>{{ record.chrom }}</td>
+                    <td>{{ record.pos }}</td>
+                    <td>{{ record.ref }}</td>
+                    <td>{{ record.alt }}</td>
+                    <td>{{ record.qual }}</td>
+                    <td>{{ record.annotation }}</td>
+                    <td>{{ record.gene_id }}</td>
+                    <td>{{ record.gene_name }}</td>
+                    <td>{{ record.feature_id }}</td>
+                    <td>{{ record.feature_type }}</td>
+                    <td>{{ record.transcript_biotype }}</td>
+                    <td>{{ record.hgvs_c }}</td>
+                    <td>{{ record.disease_code }}</td>
+                </tr>
+                {% endfor %}
                 {% else %}
-                    <tr>
-                        <td colspan="16" class="text-center py-4">
-                            <i class="bi bi-info-circle me-2"></i> Данные не найдены
-                        </td>
-                    </tr>
+                <tr>
+                    <td colspan="16">
+                        <i></i> Данные не найдены
+                    </td>
+                </tr>
                 {% endif %}
             </tbody>
         </table>
     </div>
 
-    <div class="d-flex justify-content-between align-items-center mt-3">
-        <p class="text-muted mb-0">Показано {{ records|length }} из {{ filtered_count }} записей</p>
-        
-        <nav aria-label="Page navigation">
-            <ul class="pagination mb-0">
+    <div>
+        <nav>
+            <ul>
                 {% if has_prev %}
-                    <li class="page-item">
-                        <a class="page-link" href="?{% for key, value in request.GET.items %}{% if key != 'last_row_id' and key != 'direction' %}{{ key }}={{ value }}&{% endif %}{% endfor %}last_row_id={{ first_record_row_id }}&direction=prev">
-                            <i class="bi bi-chevron-left"></i> Назад
-                        </a>
-                    </li>
+                <li>
+                    <a href>
+                        <i></i> Назад
+                    </a>
+                </li>
                 {% else %}
-                    <li class="page-item disabled">
-                        <span class="page-link"><i class="bi bi-chevron-left"></i> Назад</span>
-                    </li>
+                <li>
+                    <span><i></i> Назад</span>
+                </li>
                 {% endif %}
-                
+
                 {% if has_next %}
-                    <li class="page-item">
-                        <a class="page-link" href="?{% for key, value in request.GET.items %}{% if key != 'last_row_id' and key != 'direction' %}{{ key }}={{ value }}&{% endif %}{% endfor %}last_row_id={{ last_record_row_id }}&direction=next">
-                            Вперед <i class="bi bi-chevron-right"></i>
-                        </a>
-                    </li>
+                <li>
+                    <a href>
+                        Вперед <i></i>
+                    </a>
+                </li>
                 {% else %}
-                    <li class="page-item disabled">
-                        <span class="page-link">Вперед <i class="bi bi-chevron-right"></i></span>
-                    </li>
+                <li>
+                    <span>Вперед <i></i></span>
+                </li>
                 {% endif %}
             </ul>
         </nav>
     </div>
 </div>
+
+<div>
+    <div>
+        <div>
+            <div>
+                <h5>Сохранить фильтр</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form method="post" action="{% url 'user:save_filter' %}">
+                {% csrf_token %}
+                <div>
+                    <div>
+                        <label for="filter_name" class="form-label">Название фильтра</label>
+                        <input type="text" class="form-control" id="filter_name" name="filter_name" 
+                               required placeholder="Введите название для этого фильтра">
+                    </div>
+                    
+                    <div>
+                        <p>Применённые фильтры:</p>
+                        <div>
+                            {% for key, value in request.GET.items %}
+                                {% if value and key != 'page' and key != 'last_row_id' and key != 'direction' and key != 'export' %}
+                                    <div>
+                                        <span>{{ key }}: {{ value }}</span>
+                                        <input type="hidden" name="filter_param_{{ key }}" value="{{ value }}">
+                                    </div>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    </div>
+                    
+                </div>
+                <div>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                    <button type="submit" class="btn btn-primary">Сохранить</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 {% endblock %}
 
 {% block extra_js %}
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
 <script>
-    $(document).ready(function() {
+    $(document).ready(function () {
         function matchStart(term, text) {
             if (text.toUpperCase().indexOf(term.toUpperCase()) === 0) {
                 return true;
             }
             return false;
         }
-        
-        $.fn.select2.amd.require(['select2/defaults', 'select2/utils', 'select2/compat/matcher'], 
-            function(defaults, Utils, oldMatcher) {
-                defaults.defaults.matcher = function(params, data) {
+
+        $.fn.select2.amd.require(['select2/defaults', 'select2/utils', 'select2/compat/matcher'],
+            function (defaults, Utils, oldMatcher) {
+                defaults.defaults.matcher = function (params, data) {
                     if ($.trim(params.term) === '') {
                         return data;
                     }
-                    
+
                     if (typeof data.text === 'undefined') {
                         return null;
                     }
-                    
+
                     if (matchStart(params.term, data.text)) {
                         return data;
                     }
-                    
+
                     return null;
                 };
             });
-        
-        $('#filter-form select').each(function() {
+
+        $('#filter-form select, #variant-combo-form select').each(function () {
             if ($(this).attr('id') === 'id_qual_op') {
                 return;
             }
-            
+
             $(this).select2({
                 theme: 'bootstrap-5',
                 width: '100%',
                 allowClear: true,
                 placeholder: "Начните вводить для поиска",
                 language: {
-                    noResults: function() {
+                    noResults: function () {
                         return "Ничего не найдено";
                     },
-                    searching: function() {
+                    searching: function () {
                         return "Поиск...";
                     }
                 }
             });
         });
+
+        $('#id_variant_combo').on('change', function() {
+    var selectedValue = $(this).val();
+    if (selectedValue) {
+        if (selectedValue.includes('|')) {
+            var parts = selectedValue.split('|');
+            if (parts.length === 4) {
+                setSelectValue('#id_chrom', parts[0]);
+                $('#id_pos').val(parts[1]);
+                $('#id_ref').val(parts[2]);
+                $('#id_alt').val(parts[3]);
+                
+                console.log("Разбираем комбо по разделителю |:", parts);
+            }
+        } 
+        else {
+            try {
+                var chromPosAndMutation = selectedValue.split(' ');
+                if (chromPosAndMutation.length === 2) {
+                    var chromPos = chromPosAndMutation[0].split(':');
+                    var mutation = chromPosAndMutation[1].split('>');
+                    
+                    if (chromPos.length === 2 && mutation.length === 2) {
+                        var chrom = chromPos[0];
+                        var pos = chromPos[1];
+                        var ref = mutation[0];
+                        var alt = mutation[1];
+                        
+                        setSelectValue('#id_chrom', chrom);
+                        $('#id_pos').val(pos);
+                        $('#id_ref').val(ref);
+                        $('#id_alt').val(alt);
+                        
+                        console.log("Разбираем комбо из текста:", {chrom, pos, ref, alt});
+                    }
+                }
+            } catch (e) {
+                console.error("Ошибка при разборе строки комбинации:", e);
+            }
+        }
+    } else {
+        setSelectValue('#id_chrom', '');
+        $('#id_pos').val('');
+        $('#id_ref').val('');
+        $('#id_alt').val('');
+    }
+});
+
+function setSelectValue(selector, value) {
+    var $select = $(selector);
+    
+    if (!value) {
+        $select.val(null).trigger('change');
+        return;
+    }
+    
+    var exists = false;
+    $select.find('option').each(function() {
+        if ($(this).val() === value) {
+            exists = true;
+            return false;
+        }
+    });
+    
+    if (exists) {
+        $select.val(value).trigger('change');
+    } else {
+        var newOption = new Option(value, value, true, true);
+        $select.append(newOption).trigger('change');
+    }
+}
         
+        function updateSelectIfValueExists(selectId, value) {
+            var exists = false;
+            $(selectId + ' option').each(function() {
+                if ($(this).val() === value) {
+                    exists = true;
+                    return false; 
+                }
+            });
+            
+            if (exists) {
+                $(selectId).val(value).trigger('change.select2');
+            } else {
+                var newOption = new Option(value, value, true, true);
+                $(selectId).append(newOption).trigger('change');
+            }
+        }
+
         $('table tr').hover(
-            function() { $(this).addClass('bg-light'); },
-            function() { $(this).removeClass('bg-light'); }
+            function () { $(this).addClass('bg-light'); },
+            function () { $(this).removeClass('bg-light'); }
         );
-        
-        $('#filter-form').submit(function() {
+
+        $('#filter-form').submit(function () {
             const hiddenInput = document.createElement('input');
             hiddenInput.type = 'hidden';
             hiddenInput.name = 'last_row_id';
             hiddenInput.value = '';
             this.appendChild(hiddenInput);
-            
+
+            const formId = this.id;
+
+            setTimeout(function () {
+                if (formId === 'filter-form') {
+                    $('#filtersCollapse').collapse('hide');
+                } else if (formId === 'variant-combo-form') {
+                    $('#variantComboCollapse').collapse('hide');
+                }
+            }, 100);
+
             return true;
         });
-        
+
+        $('#variant-combo-form').off('submit').on('submit', function (e) {
+            e.preventDefault(); 
+            
+            var selectedValue = $('#id_variant_combo').val();
+            if (!selectedValue) {
+                alert('Пожалуйста, выберите вариант для поиска');
+                return false;
+            }
+            
+            var chrom, pos, ref, alt;
+            
+            if (selectedValue.includes('|')) {
+                var parts = selectedValue.split('|');
+                if (parts.length === 4) {
+                    chrom = parts[0];
+                    pos = parts[1];
+                    ref = parts[2];
+                    alt = parts[3];
+                }
+            } 
+            else {
+                try {
+                    var chromPosAndMutation = selectedValue.split(' ');
+                    if (chromPosAndMutation.length === 2) {
+                        var chromPos = chromPosAndMutation[0].split(':');
+                        var mutation = chromPosAndMutation[1].split('>');
+                        
+                        if (chromPos.length === 2 && mutation.length === 2) {
+                            chrom = chromPos[0];
+                            pos = chromPos[1];
+                            ref = mutation[0];
+                            alt = mutation[1];
+                        }
+                    }
+                } catch (e) {
+                    console.error("Ошибка при разборе строки комбинации:", e);
+                    alert('Не удалось разобрать выбранный вариант. Пожалуйста, попробуйте другой.');
+                    return false;
+                }
+            }
+            
+            if (!chrom || !pos || !ref || !alt) {
+                alert('Не удалось определить все необходимые параметры из выбранного варианта.');
+                return false;
+            }
+            
+            var searchParams = new URLSearchParams(window.location.search);
+            
+            searchParams.set('chrom', chrom);
+            searchParams.set('pos', pos);
+            searchParams.set('ref', ref);
+            searchParams.set('alt', alt);
+            
+            window.location.href = window.location.pathname + '?' + searchParams.toString();
+            
+            return false;
+        });
+
         $('#id_qual_op').css('min-width', '80px');
         $('#id_qual_value').css('flex', '1');
-        
-        $('td').each(function() {
+
+        $('td').each(function () {
             var cellContent = $(this).text().trim();
             if (cellContent.length > 50) {
                 $(this).addClass('cell-truncate');
-                
                 $(this).attr('title', cellContent);
             }
         });
-        
+
         if (window.location.search) {
             $('#filtersCollapse').addClass('show');
         }
-        
-        $('.filter-badge .close').click(function(e) {
+
+        $('.filter-badge .close').click(function (e) {
             e.preventDefault();
             const href = $(this).attr('href');
-            $(this).parent().fadeOut(300, function() {
+            $(this).parent().fadeOut(300, function () {
                 window.location.href = href;
             });
         });
+        function restoreSelectedVariant() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const chrom = urlParams.get('chrom');
+        const pos = urlParams.get('pos');
+        const ref = urlParams.get('ref');
+        const alt = urlParams.get('alt');
+        
+        if (chrom && pos && ref && alt) {
+            console.log('Восстанавливаем выбранный вариант:', {chrom, pos, ref, alt});
+            
+            const variantPattern = chrom + ':' + pos + ' ' + ref + '>' + alt;
+            
+            let foundOption = null;
+            
+            $('#id_variant_combo option').each(function() {
+                const optionValue = $(this).val();
+                const optionText = $(this).text();
+                
+                if (optionText.includes(variantPattern)) {
+                    foundOption = optionValue;
+                    return false;
+                }
+                
+                if (optionValue.includes('|')) {
+                    const parts = optionValue.split('|');
+                    if (parts.length === 4 && 
+                        parts[0] === chrom && 
+                        parts[1] === pos && 
+                        parts[2] === ref && 
+                        parts[3] === alt) {
+                        foundOption = optionValue;
+                        return false;
+                    }
+                }
+            });
+            
+            if (foundOption) {
+                console.log('Найдена опция:', foundOption);
+                $('#id_variant_combo').val(foundOption).trigger('change');
+            } 
+            else {
+                console.log('Создаем новую опцию для:', variantPattern);
+                
+                const newValue = chrom + '|' + pos + '|' + ref + '|' + alt;
+                
+                const newOption = new Option(variantPattern, newValue, true, true);
+                
+                $('#id_variant_combo').append(newOption).trigger('change');
+            }
+        }
+    }
+    
+    setTimeout(function() {
+        restoreSelectedVariant();
+    }, 500); 
     });
 </script>
 {% endblock %}

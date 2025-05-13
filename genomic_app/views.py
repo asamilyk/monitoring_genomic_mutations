@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.db.models import Q
 from .models import DataVcf
 from .forms import GenomicFilterForm
+from django.contrib.auth.decorators import login_required
 import csv
 from django.http import HttpResponse
 import xlsxwriter
@@ -26,14 +27,21 @@ def data_table(request):
         disease_code = form.cleaned_data.get('disease_code')
         gene_name = form.cleaned_data.get('gene_name')
         annotation = form.cleaned_data.get('annotation')
-        qual_op = form.cleaned_data.get('qual_op')
-        qual_value = form.cleaned_data.get('qual_value')
-        
         gene_id = form.cleaned_data.get('gene_id')
         id_value = form.cleaned_data.get('id')
         orig_id = form.cleaned_data.get('orig_id')
         feature_type = form.cleaned_data.get('feature_type')
         transcript_biotype = form.cleaned_data.get('transcript_biotype')
+        qual_op = form.cleaned_data.get('qual_op')
+        qual_value = form.cleaned_data.get('qual_value')
+        
+        pos = form.cleaned_data.get('pos')
+        ref = form.cleaned_data.get('ref')
+        alt = form.cleaned_data.get('alt')
+        feature_id = form.cleaned_data.get('feature_id')
+        hgvs_c = form.cleaned_data.get('hgvs_c')
+        
+        variant_combo = form.cleaned_data.get('variant_combo')
         
         if chrom:
             base_query = base_query.filter(chrom=chrom)
@@ -54,6 +62,17 @@ def data_table(request):
         if transcript_biotype:
             base_query = base_query.filter(transcript_biotype=transcript_biotype)
         
+        if pos:
+            base_query = base_query.filter(pos=pos)
+        if ref:
+            base_query = base_query.filter(ref=ref)
+        if alt:
+            base_query = base_query.filter(alt=alt)
+        if feature_id:
+            base_query = base_query.filter(feature_id=feature_id)
+        if hgvs_c:
+            base_query = base_query.filter(hgvs_c=hgvs_c)
+        
         if qual_op and qual_value is not None:
             if qual_op == 'eq':
                 base_query = base_query.filter(qual=qual_value)
@@ -65,7 +84,22 @@ def data_table(request):
                 base_query = base_query.filter(qual__gte=qual_value)
             elif qual_op == 'lte':
                 base_query = base_query.filter(qual__lte=qual_value)
-
+        
+        if variant_combo:
+            parts = variant_combo.split('|')
+            if len(parts) == 4:
+                chrom, pos_str, ref, alt = parts
+                try:
+                    pos = int(pos_str)
+                    base_query = base_query.filter(
+                        chrom=chrom,
+                        pos=pos,
+                        ref=ref,
+                        alt=alt
+                    )
+                except ValueError:
+                    pass
+    
     export_format = request.GET.get('export')
     if export_format:
         return export_data(request, base_query, export_format)
@@ -133,6 +167,7 @@ def data_table(request):
         'last_record_row_id': last_record_row_id,
         'total_count': DataVcf.objects.count(),
         'filtered_count': base_query.count(),
+        'has_active_filters': bool(any(request.GET.get(key) for key in request.GET if key not in ['page', 'last_row_id', 'direction', 'export'])),
     }
     
     return render(request, 'genomic_app/data_table.html', context)

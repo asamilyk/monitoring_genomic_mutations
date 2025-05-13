@@ -54,17 +54,53 @@
         .input-group>*:not(:last-child) {
             margin-right: 0.5rem;
         }
+        
+        /* Стили для шапки */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        header .brand {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #212529;
+            text-decoration: none;
+        }
+
+        header .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        header .nav-links a {
+            color: #6c757d;
+            text-decoration: none;
+            transition: color 0.15s ease-in-out;
+        }
+
+        header .nav-links a:hover {
+            color: #0d6efd;
+        }
     </style>
     {% block extra_css %}{% endblock %}
 </head>
 
 <body>
     <div class="container-fluid px-4">
-        <header class="d-flex justify-content-between align-items-center py-3 mb-4 border-bottom">
-            <a href="/" class="d-flex align-items-center text-dark text-decoration-none">
-                <span class="fs-4">CardioDB</span>
+        <header>
+            <a href="/" class="brand">
+                <span>CardioDB</span>
             </a>
-            <div>
+            <div class="nav-links">
+                <a href="{% url 'user:filter_history' %}" class="btn btn-outline-primary">
+                    <i class="bi bi-clock-history"></i> История фильтров
+                </a>
                 <form method="post" action="{% url 'logout' %}" class="d-inline">
                     {% csrf_token %}
                     <button type="submit" class="btn btn-outline-danger">Выйти</button>
@@ -76,8 +112,8 @@
             {% block content %}{% endblock %}
         </main>
 
-        <footer class="py-3 my-4 border-top">
-            <p class="text-center text-muted">© 2025 Monitoring genomic mutations</p>
+        <footer class="mt-5 py-3 text-center text-muted border-top">
+            <p>© 2025 Monitoring genomic mutations</p>
         </footer>
     </div>
 
