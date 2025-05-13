@@ -6,7 +6,8 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
 
 <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-<link href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" rel="stylesheet" />
+<link href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css"
+    rel="stylesheet" />
 
 <style>
     .table-wrap {
@@ -144,174 +145,177 @@
 {% block content %}
 
 {% if request.GET %}
-<div>
+<div class="active-filters mb-3">
     {% for key, value in request.GET.items %}
     {% if value and key != 'page' and key != 'last_row_id' and key != 'direction' and key != 'export' %}
-    <div>
+    <div class="filter-badge">
         <span>{{ key }}: {{ value }}</span>
-        <a href>&times;</a>
+        <a href="?{% for k, v in request.GET.items %}{% if k != key and k != 'page' and k != 'last_row_id' and k != 'direction' %}{{ k }}={{ v|urlencode }}&{% endif %}{% endfor %}"
+            class="close text-dark">&times;</a>
     </div>
     {% endif %}
     {% endfor %}
 
     {% if request.GET %}
-    <div>
-        <a href>
-            <i></i> Сбросить все
+    <div class="filter-badge bg-light">
+        <a href="{% url 'genomic_app:data_table' %}" class="text-decoration-none text-dark">
+            <i class="bi bi-x-circle"></i> Сбросить все
         </a>
     </div>
     {% endif %}
 </div>
 {% endif %}
 {% if request.GET %}
-    <div>
+    <div class="d-flex justify-content-end mb-3">
         <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#saveFilterModal">
-            <i></i> Сохранить фильтр
+            <i class="bi bi-bookmark-plus"></i> Сохранить фильтр
         </button>
     </div>
 {% endif %}
 <div>
-    <div>
+    <div class="d-flex justify-content-between align-items-center mb-3">
         <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#filtersCollapse"
             aria-expanded="false" aria-controls="filtersCollapse">
-            <i></i> Фильтры
+            <i class="bi bi-funnel"></i> Фильтры
         </button>
 
-        <div>
+        <div class="dropdown">
             <button class="btn btn-secondary dropdown-toggle" type="button" id="exportDropdown"
                 data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <i></i> Экспорт
+                <i class="bi bi-download"></i> Экспорт
             </button>
-            <ul>
+            <ul class="dropdown-menu" aria-labelledby="exportDropdown">
                 <li>
-                    <a href>
-                        <i></i> CSV
+                    <a class="dropdown-item"
+                        href="?export=csv{% for key, value in request.GET.items %}{% if key != 'export' and key != 'page' and key != 'last_row_id' and key != 'direction' %}&{{ key }}={{ value|urlencode }}{% endif %}{% endfor %}">
+                        <i class="bi bi-filetype-csv"></i> CSV
                     </a>
                 </li>
                 <li>
-                    <a href>
-                        <i></i> Excel
+                    <a class="dropdown-item"
+                        href="?export=excel{% for key, value in request.GET.items %}{% if key != 'export' and key != 'page' and key != 'last_row_id' and key != 'direction' %}&{{ key }}={{ value|urlencode }}{% endif %}{% endfor %}">
+                        <i class="bi bi-file-earmark-excel"></i> Excel
                     </a>
                 </li>
             </ul>
         </div>
     </div>
 
-    <div>
-        <div>
+    <div class="collapse mb-4" id="filtersCollapse">
+        <div class="card card-body filter-card">
             <form method="get" id="filter-form" class="form filter-compact">
-                <div>
-                    <div>
-                        <div>
+                <div class="row">
+                    <div class="col-lg-3 col-md-6 mb-3">
+                        <div class="form-group">
                             <label for="{{ form.chrom.id_for_label }}" class="form-label">{{ form.chrom.label }}:</label>
                             {{ form.chrom.errors }}
                             {{ form.chrom }}
                         </div>
 
-                        <div>
+                        <div class="form-group">
                             <label for="{{ form.pos.id_for_label }}" class="form-label">{{ form.pos.label }}:</label>
                             {{ form.pos.errors }}
                             {{ form.pos }}
                         </div>
 
-                        <div>
+                        <div class="form-group">
                             <label for="{{ form.ref.id_for_label }}" class="form-label">{{ form.ref.label }}:</label>
                             {{ form.ref.errors }}
                             {{ form.ref }}
                         </div>
 
-                        <div>
+                        <div class="form-group">
                             <label for="{{ form.alt.id_for_label }}" class="form-label">{{ form.alt.label }}:</label>
                             {{ form.alt.errors }}
                             {{ form.alt }}
                         </div>
                     </div>
 
-                    <div>
-                        <div>
+                    <div class="col-lg-3 col-md-6 mb-3">
+                        <div class="form-group">
                             <label for="{{ form.gene_name.id_for_label }}" class="form-label">{{ form.gene_name.label }}:</label>
                             {{ form.gene_name.errors }}
                             {{ form.gene_name }}
                         </div>
 
-                        <div>
+                        <div class="form-group">
                             <label for="{{ form.gene_id.id_for_label }}" class="form-label">{{ form.gene_id.label }}:</label>
                             {{ form.gene_id.errors }}
                             {{ form.gene_id }}
                         </div>
 
-                        <div>
+                        <div class="form-group">
                             <label for="{{ form.feature_id.id_for_label }}" class="form-label">{{ form.feature_id.label }}:</label>
                             {{ form.feature_id.errors }}
                             {{ form.feature_id }}
                         </div>
 
-                        <div>
+                        <div class="form-group">
                             <label for="{{ form.hgvs_c.id_for_label }}" class="form-label">{{ form.hgvs_c.label }}:</label>
                             {{ form.hgvs_c.errors }}
                             {{ form.hgvs_c }}
                         </div>
                     </div>
 
-                    <div>
-                        <div>
+                    <div class="col-lg-3 col-md-6 mb-3">
+                        <div class="form-group">
                             <label for="{{ form.id.id_for_label }}" class="form-label">{{ form.id.label }}:</label>
                             {{ form.id.errors }}
                             {{ form.id }}
                         </div>
 
-                        <div>
+                        <div class="form-group">
                             <label for="{{ form.orig_id.id_for_label }}" class="form-label">{{ form.orig_id.label }}:</label>
                             {{ form.orig_id.errors }}
                             {{ form.orig_id }}
                         </div>
 
-                        <div>
+                        <div class="form-group">
                             <label for="{{ form.disease_code.id_for_label }}" class="form-label">{{form.disease_code.label }}:</label>
                             {{ form.disease_code.errors }}
                             {{ form.disease_code }}
                         </div>
 
-                        <div>
+                        <div class="form-group">
                             <label for="{{ form.annotation.id_for_label }}" class="form-label">{{ form.annotation.label }}:</label>
                             {{ form.annotation.errors }}
                             {{ form.annotation }}
                         </div>
                     </div>
 
-                    <div>
-                        <div>
+                    <div class="col-lg-3 col-md-6 mb-3">
+                        <div class="form-group">
                             <label for="{{ form.feature_type.id_for_label }}" class="form-label">{{ form.feature_type.label }}:</label>
                             {{ form.feature_type.errors }}
                             {{ form.feature_type }}
                         </div>
 
-                        <div>
+                        <div class="form-group">
                             <label for="{{ form.transcript_biotype.id_for_label }}" class="form-label">{{ form.transcript_biotype.label }}:</label>
                             {{ form.transcript_biotype.errors }}
                             {{ form.transcript_biotype }}
                         </div>
 
-                        <div>
+                        <div class="form-group">
                             <label class="form-label">Qual:</label>
-                            <div>
+                            <div class="input-group">
                                 {{ form.qual_op }}
                                 {{ form.qual_value }}
                             </div>
                             {% if form.qual_op.errors or form.qual_value.errors %}
-                            <div>
+                            <div class="invalid-feedback d-block">
                                 {{ form.qual_op.errors }}
                                 {{ form.qual_value.errors }}
                             </div>
                             {% endif %}
                         </div>
 
-                        <div>
+                        <div class="mt-auto pt-3">
                             <button type="submit" class="btn btn-primary me-2">
-                                <i></i> Применить
+                                <i class="bi bi-filter"></i> Применить
                             </button>
-                            <a href>
-                                <i></i> Сбросить
+                            <a href="{% url 'genomic_app:data_table' %}" class="btn btn-outline-secondary">
+                                <i class="bi bi-x-circle"></i> Сбросить
                             </a>
                         </div>
                     </div>
@@ -320,31 +324,31 @@
         </div>
     </div>
 
-        <div>
+        <div class="mb-3">
             <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#variantComboCollapse"
                 aria-expanded="false" aria-controls="variantComboCollapse">
-                <i></i> Поиск по группам
+                <i class="bi bi-search"></i> Поиск по группам
             </button>
         </div>
     
-        <div>
-            <div>
-                <h5>Поиск вариантов по координатам</h5>
+        <div class="collapse mb-4" id="variantComboCollapse">
+            <div class="card card-body variant-combo-section">
+                <h5 class="mb-3">Поиск вариантов по координатам</h5>
                 <form method="get" id="variant-combo-form" class="form">
-                    <div>
-                        <div>
+                    <div class="row">
+                        <div class="col-md-6">
                             <label for="{{ form.variant_combo.id_for_label }}" class="form-label">Комбинация (chrom:pos
                                 ref>alt):</label>
                             {{ form.variant_combo.errors }}
                             {{ form.variant_combo }}
                         </div>
-                        <div>
+                        <div class="col-md-6 d-flex align-items-end">
                             <button type="submit" class="btn btn-primary me-2">
-                                <i></i> Найти вариант
+                                <i class="bi bi-search"></i> Найти вариант
                             </button>
                             <button type="button" class="btn btn-outline-secondary" data-bs-toggle="collapse"
                                 data-bs-target="#variantComboCollapse">
-                                <i></i> Отмена
+                                <i class="bi bi-x"></i> Отмена
                             </button>
                         </div>
                     </div>
@@ -352,54 +356,59 @@
             </div>
         </div>
     
-    <div>
-        <table>
-            <thead>
+
+    <div class="alert alert-info mb-3">
+        Найдено <strong>{{ total_count }}</strong> записей, соответствующих вашим критериям
+    </div>
+
+    <div class="table-wrap">
+        <table class="table table-striped table-bordered table-hover">
+            <thead class="table-dark">
                 <tr>
-                    <th>Row ID</th>
-                    <th>ID</th>
-                    <th>Orig ID</th>
-                    <th>Хромосома</th>
-                    <th>Позиция</th>
-                    <th>Ref</th>
-                    <th>Alt</th>
-                    <th>Qual</th>
-                    <th>Аннотация</th>
-                    <th>Gene ID</th>
-                    <th>Gene Name</th>
-                    <th>Feature ID</th>
-                    <th>Feature Type</th>
-                    <th>Transcript Biotype</th>
-                    <th>HGVS C</th>
-                    <th>Код заболевания</th>
+                    <th class="col-id">Row ID</th>
+                    <th class="col-id">ID</th>
+                    <th class="col-medium">Orig ID</th>
+                    <th class="col-small">Хромосома</th>
+                    <th class="col-medium">Позиция</th>
+                    <th class="col-small">Ref</th>
+                    <th class="col-small">Alt</th>
+                    <th class="col-small">Qual</th>
+                    <th class="col-large">Аннотация</th>
+                    <th class="col-large">Gene ID</th>
+                    <th class="col-medium">Gene Name</th>
+                    <th class="col-large">Feature ID</th>
+                    <th class="col-medium">Feature Type</th>
+                    <th class="col-medium">Transcript Biotype</th>
+                    <th class="col-medium">HGVS C</th>
+                    <th class="col-small">Код заболевания</th>
                 </tr>
             </thead>
             <tbody>
                 {% if records %}
                 {% for record in records %}
                 <tr>
-                    <td>{{ record.row_id }}</td>
-                    <td>{{ record.id }}</td>
-                    <td>{{ record.orig_id }}</td>
-                    <td>{{ record.chrom }}</td>
-                    <td>{{ record.pos }}</td>
-                    <td>{{ record.ref }}</td>
-                    <td>{{ record.alt }}</td>
-                    <td>{{ record.qual }}</td>
-                    <td>{{ record.annotation }}</td>
-                    <td>{{ record.gene_id }}</td>
-                    <td>{{ record.gene_name }}</td>
-                    <td>{{ record.feature_id }}</td>
-                    <td>{{ record.feature_type }}</td>
-                    <td>{{ record.transcript_biotype }}</td>
-                    <td>{{ record.hgvs_c }}</td>
-                    <td>{{ record.disease_code }}</td>
+                    <td class="col-id">{{ record.row_id }}</td>
+                    <td class="col-id">{{ record.id |slice:"6:"}}</td>
+                    <td class="col-medium">{{ record.orig_id }}</td>
+                    <td class="col-small">{{ record.chrom }}</td>
+                    <td class="col-medium">{{ record.pos }}</td>
+                    <td class="col-small">{{ record.ref }}</td>
+                    <td class="col-small">{{ record.alt }}</td>
+                    <td class="col-small">{{ record.qual }}</td>
+                    <td class="col-large cell-truncate">{{ record.annotation }}</td>
+                    <td class="col-large cell-truncate">{{ record.gene_id }}</td>
+                    <td class="col-medium">{{ record.gene_name }}</td>
+                    <td class="col-large cell-truncate">{{ record.feature_id }}</td>
+                    <td class="col-medium">{{ record.feature_type }}</td>
+                    <td class="col-medium">{{ record.transcript_biotype }}</td>
+                    <td class="col-medium">{{ record.hgvs_c }}</td>
+                    <td class="col-small">{{ record.disease_code }}</td>
                 </tr>
                 {% endfor %}
                 {% else %}
                 <tr>
-                    <td colspan="16">
-                        <i></i> Данные не найдены
+                    <td colspan="16" class="text-center">
+                        <i class="bi bi-exclamation-circle"></i> Данные не найдены
                     </td>
                 </tr>
                 {% endif %}
@@ -407,30 +416,33 @@
         </table>
     </div>
 
-    <div>
-        <nav>
-            <ul>
+    <div class="d-flex justify-content-between align-items-center mt-3">
+
+        <nav aria-label="Page navigation">
+            <ul class="pagination">
                 {% if has_prev %}
-                <li>
-                    <a href>
-                        <i></i> Назад
+                <li class="page-item">
+                    <a class="page-link"
+                        href="?last_row_id={{ first_record_row_id }}&direction=prev{% for key, value in request.GET.items %}{% if key != 'last_row_id' and key != 'direction' and key != 'page' %}&{{ key }}={{ value|urlencode }}{% endif %}{% endfor %}">
+                        <i class="bi bi-chevron-left"></i> Назад
                     </a>
                 </li>
                 {% else %}
-                <li>
-                    <span><i></i> Назад</span>
+                <li class="page-item disabled">
+                    <span class="page-link"><i class="bi bi-chevron-left"></i> Назад</span>
                 </li>
                 {% endif %}
 
                 {% if has_next %}
-                <li>
-                    <a href>
-                        Вперед <i></i>
+                <li class="page-item">
+                    <a class="page-link"
+                        href="?last_row_id={{ last_record_row_id }}&direction=next{% for key, value in request.GET.items %}{% if key != 'last_row_id' and key != 'direction' and key != 'page' %}&{{ key }}={{ value|urlencode }}{% endif %}{% endfor %}">
+                        Вперед <i class="bi bi-chevron-right"></i>
                     </a>
                 </li>
                 {% else %}
-                <li>
-                    <span>Вперед <i></i></span>
+                <li class="page-item disabled">
+                    <span class="page-link">Вперед <i class="bi bi-chevron-right"></i></span>
                 </li>
                 {% endif %}
             </ul>
@@ -438,28 +450,28 @@
     </div>
 </div>
 
-<div>
-    <div>
-        <div>
-            <div>
-                <h5>Сохранить фильтр</h5>
+<div class="modal fade" id="saveFilterModal" tabindex="-1" aria-labelledby="saveFilterModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="saveFilterModalLabel">Сохранить фильтр</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <form method="post" action="{% url 'user:save_filter' %}">
                 {% csrf_token %}
-                <div>
-                    <div>
+                <div class="modal-body">
+                    <div class="mb-3">
                         <label for="filter_name" class="form-label">Название фильтра</label>
                         <input type="text" class="form-control" id="filter_name" name="filter_name" 
                                required placeholder="Введите название для этого фильтра">
                     </div>
                     
-                    <div>
-                        <p>Применённые фильтры:</p>
-                        <div>
+                    <div class="filter-summary">
+                        <p class="mb-2">Применённые фильтры:</p>
+                        <div class="active-filters">
                             {% for key, value in request.GET.items %}
                                 {% if value and key != 'page' and key != 'last_row_id' and key != 'direction' and key != 'export' %}
-                                    <div>
+                                    <div class="filter-badge">
                                         <span>{{ key }}: {{ value }}</span>
                                         <input type="hidden" name="filter_param_{{ key }}" value="{{ value }}">
                                     </div>
@@ -469,7 +481,7 @@
                     </div>
                     
                 </div>
-                <div>
+                <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
                     <button type="submit" class="btn btn-primary">Сохранить</button>
                 </div>
@@ -485,6 +497,7 @@
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
 <script>
+
     $(document).ready(function () {
         function matchStart(term, text) {
             if (text.toUpperCase().indexOf(term.toUpperCase()) === 0) {
@@ -635,6 +648,7 @@ function setSelectValue(selector, value) {
 
             const formId = this.id;
 
+
             setTimeout(function () {
                 if (formId === 'filter-form') {
                     $('#filtersCollapse').collapse('hide');
@@ -656,7 +670,7 @@ function setSelectValue(selector, value) {
             }
             
             var chrom, pos, ref, alt;
-            
+
             if (selectedValue.includes('|')) {
                 var parts = selectedValue.split('|');
                 if (parts.length === 4) {
@@ -694,18 +708,22 @@ function setSelectValue(selector, value) {
             
             var searchParams = new URLSearchParams(window.location.search);
             
+
             searchParams.set('chrom', chrom);
             searchParams.set('pos', pos);
             searchParams.set('ref', ref);
             searchParams.set('alt', alt);
-            
+
             window.location.href = window.location.pathname + '?' + searchParams.toString();
             
-            return false;
+            return false; 
         });
+
+
 
         $('#id_qual_op').css('min-width', '80px');
         $('#id_qual_value').css('flex', '1');
+
 
         $('td').each(function () {
             var cellContent = $(this).text().trim();
@@ -715,9 +733,11 @@ function setSelectValue(selector, value) {
             }
         });
 
+ 
         if (window.location.search) {
             $('#filtersCollapse').addClass('show');
         }
+
 
         $('.filter-badge .close').click(function (e) {
             e.preventDefault();
@@ -727,6 +747,7 @@ function setSelectValue(selector, value) {
             });
         });
         function restoreSelectedVariant() {
+
         const urlParams = new URLSearchParams(window.location.search);
         const chrom = urlParams.get('chrom');
         const pos = urlParams.get('pos');
@@ -736,6 +757,7 @@ function setSelectValue(selector, value) {
         if (chrom && pos && ref && alt) {
             console.log('Восстанавливаем выбранный вариант:', {chrom, pos, ref, alt});
             
+
             const variantPattern = chrom + ':' + pos + ' ' + ref + '>' + alt;
             
             let foundOption = null;
@@ -746,7 +768,7 @@ function setSelectValue(selector, value) {
                 
                 if (optionText.includes(variantPattern)) {
                     foundOption = optionValue;
-                    return false;
+                    return false; 
                 }
                 
                 if (optionValue.includes('|')) {
@@ -757,7 +779,7 @@ function setSelectValue(selector, value) {
                         parts[2] === ref && 
                         parts[3] === alt) {
                         foundOption = optionValue;
-                        return false;
+                        return false; 
                     }
                 }
             });
@@ -778,6 +800,7 @@ function setSelectValue(selector, value) {
         }
     }
     
+
     setTimeout(function() {
         restoreSelectedVariant();
     }, 500); 
