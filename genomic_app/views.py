@@ -29,6 +29,8 @@ def data_table(request):
         annotation = form.cleaned_data.get('annotation')
         gene_id = form.cleaned_data.get('gene_id')
         id_value = form.cleaned_data.get('id')
+        if id_value:
+            base_query = base_query.filter(id=id_value)
         orig_id = form.cleaned_data.get('orig_id')
         feature_type = form.cleaned_data.get('feature_type')
         transcript_biotype = form.cleaned_data.get('transcript_biotype')

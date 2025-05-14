@@ -39,6 +39,7 @@ class GenomicFilterForm(forms.Form):
         required=False
     )
     
+    
     orig_id = forms.ChoiceField(
         label='Orig ID',
         choices=[('', 'Все Orig ID')],
@@ -144,7 +145,7 @@ class GenomicFilterForm(forms.Form):
         
         id_choices = [('', 'Все ID')]
         ids = DataVcf.objects.values_list('id', flat=True).distinct().order_by('id')[:500]
-        id_choices.extend([(i, i) for i in ids if i is not None])
+        id_choices.extend([(str(i), str(i)[5:]) for i in ids if i is not None])
         self.fields['id'].choices = id_choices
         
         orig_id_choices = [('', 'Все Orig ID')]

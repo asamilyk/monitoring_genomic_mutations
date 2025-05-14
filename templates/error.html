@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ error_title }}{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="alert alert-danger mb-4">
+        <h2 class="alert-heading"><i class="bi bi-exclamation-triangle-fill"></i> {{ error_title }}</h2>
+        <p class="lead">{{ error_message }}</p>
+        
+        {% if error_details and debug %}
+        <hr>
+        <div class="mt-3">
+            <details>
+                <summary>Технические детали (только для отладки)</summary>
+                <pre class="mt-2 p-3 bg-light">{{ error_details }}</pre>
+                {% if error_traceback %}
+                <pre class="mt-2 p-3 bg-light">{{ error_traceback }}</pre>
+                {% endif %}
+            </details>
+        </div>
+        {% endif %}
+    </div>
+    
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">Что делать дальше?</h5>
+            <ul>
+                <li>Вернуться <a href="javascript:history.back()">на предыдущую страницу</a></li>
+                <li>Перейти на <a href="/">главную страницу</a></li>
+                <li>Обновить страницу и попробовать снова</li>
+                {% if not is_database_error %}
+                <li>Убедиться в корректности вводимых данных</li>
+                {% endif %}
+            </ul>
+            
+            <div class="d-flex justify-content-center gap-3 mt-4">
+                <a href="javascript:history.back()" class="btn btn-outline-primary">
+                    <i class="bi bi-arrow-left"></i> Назад
+                </a>
+                <a href="/" class="btn btn-primary">
+                    <i class="bi bi-house"></i> Главная
+                </a>
+                <button onclick="window.location.reload()" class="btn btn-outline-secondary">
+                    <i class="bi bi-arrow-clockwise"></i> Обновить
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

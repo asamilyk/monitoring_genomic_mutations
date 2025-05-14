@@ -86,6 +86,24 @@
         header .nav-links a:hover {
             color: #0d6efd;
         }
+        .btn-outline-primary {
+            border-color: #4285F4;
+            color: #4285F4;
+        }
+
+        .btn-outline-primary:hover {
+            background-color: rgba(66, 133, 244, 0.1);
+            border-color: #4285F4;
+            color: #4285F4;
+        }
+
+        .btn-outline-primary:active,
+        .btn-outline-primary:focus {
+            background-color: rgba(66, 133, 244, 0.2) !important;
+            border-color: #4285F4 !important;
+            color: #4285F4 !important;
+            box-shadow: 0 0 0 0.25rem rgba(66, 133, 244, 0.25) !important;
+        }
     </style>
     {% block extra_css %}{% endblock %}
 </head>
@@ -96,15 +114,17 @@
             <a href="/" class="brand">
                 <span>CardioDB</span>
             </a>
-            <div class="nav-links">
-                <a href="{% url 'user:filter_history' %}" class="btn btn-outline-primary">
-                    <i class="bi bi-clock-history"></i> История фильтров
-                </a>
-                <form method="post" action="{% url 'logout' %}" class="d-inline">
-                    {% csrf_token %}
-                    <button type="submit" class="btn btn-outline-danger">Выйти</button>
-                </form>
-            </div>
+            {% if user.is_authenticated %}
+                <div class="nav-links">
+                    <a href="{% url 'user:filter_history' %}" class="btn btn-outline-primary rounded-pill">
+                        <i class="bi bi-clock-history"></i> История фильтров
+                    </a>
+                    <form method="post" action="{% url 'logout' %}" class="d-inline">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-outline-danger">Выйти</button>
+                    </form>
+                </div>
+            {% endif %}
         </header>
 
         <main>

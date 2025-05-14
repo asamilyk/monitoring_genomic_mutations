@@ -333,7 +333,7 @@
     
         <div class="collapse mb-4" id="variantComboCollapse">
             <div class="card card-body variant-combo-section">
-                <h5 class="mb-3">Поиск вариантов по координатам</h5>
+                <h5 class="mb-3">Поиск вариантов по группам</h5>
                 <form method="get" id="variant-combo-form" class="form">
                     <div class="row">
                         <div class="col-md-6">
@@ -356,9 +356,8 @@
             </div>
         </div>
     
-
     <div class="alert alert-info mb-3">
-        Найдено <strong>{{ total_count }}</strong> записей, соответствующих вашим критериям
+    Найдено <strong>{{ filtered_count }}</strong> записей, соответствующих вашим критериям
     </div>
 
     <div class="table-wrap">
@@ -388,7 +387,7 @@
                 {% for record in records %}
                 <tr>
                     <td class="col-id">{{ record.row_id }}</td>
-                    <td class="col-id">{{ record.id |slice:"6:"}}</td>
+                    <td class="col-id">{{ record.id|stringformat:"s"|slice:"5:" }}</td>
                     <td class="col-medium">{{ record.orig_id }}</td>
                     <td class="col-small">{{ record.chrom }}</td>
                     <td class="col-medium">{{ record.pos }}</td>
