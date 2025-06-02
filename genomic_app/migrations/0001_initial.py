@@ -32,7 +32,7 @@ class Migration(migrations.Migration):
                 ('disease_code', models.CharField(blank=True, max_length=10, null=True)),
             ],
             options={
-                'db_table': 'crd_dmt"."data_vcf_new_2',
+                'db_table': 'crd_dmt"."data_vcf_4',
                 'managed': True,
             },
         ),

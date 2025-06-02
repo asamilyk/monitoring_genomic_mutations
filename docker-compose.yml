@@ -1,0 +1,51 @@
+services:
+  genomic_postgres:
+    image: postgres:15-alpine
+    container_name: genomic_postgres
+    env_file:
+      - database.env
+    volumes:
+      - genomic_postgres_data:/var/lib/postgresql/data
+      - ./docker_scripts/init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
+    ports:
+      - "5432:5432"
+    networks:
+      - genomic_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  genomic_web:
+    build: .
+    container_name: genomic_web
+    environment:
+      - DATABASE_HOST=genomic_postgres
+      - DATABASE_PORT=5432
+    env_file:
+      - database.env
+    volumes:
+      - ./static:/app/static
+      - ./staticfiles:/app/staticfiles
+    ports:
+      - "8000:8000"
+    networks:
+      - genomic_network
+    depends_on:
+      genomic_postgres:
+        condition: service_healthy
+    command: >
+      sh -c "
+        python manage.py migrate &&
+        python manage.py collectstatic --noinput &&
+        bash docker_scripts/create_admin.sh &&
+        python manage.py runserver 0.0.0.0:8000
+      "
+
+volumes:
+  genomic_postgres_data:
+
+networks:
+  genomic_network:
+    driver: bridge

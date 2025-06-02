@@ -80,11 +80,11 @@ WSGI_APPLICATION = 'monitoring_genomic_mutations.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'cardio',  
-        'USER': 'postgres',  
-        'PASSWORD': 'qtFU39PydEccPdyK',
-        'HOST': '127.0.0.1', 
-        'PORT': '5432',  
+        'NAME': os.environ.get('POSTGRES_DB', 'cardio'),  
+        'USER': os.environ.get('POSTGRES_USER', 'postgres'),  
+        'PASSWORD': os.environ.get('POSTGRES_PASSWORD', 'qtFU39PydEccPdyK'),
+        'HOST': os.environ.get('DATABASE_HOST', '127.0.0.1'), 
+        'PORT': os.environ.get('DATABASE_PORT', '5432'),  
     }
 }
 
@@ -150,8 +150,8 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 SESSION_COOKIE_AGE = 60 * 60 * 24 * 30  # 30 дней
 SESSION_EXPIRE_AT_BROWSER_CLOSE = False
 
-REMOTE_DB_HOST = '127.0.0.1'
-REMOTE_DB_PORT = 5432
-REMOTE_DB_NAME = 'cardio'
-REMOTE_DB_USER = 'postgres'
-REMOTE_DB_PASSWORD = 'qtFU39PydEccPdyK'
+REMOTE_DB_HOST = os.environ.get('DATABASE_HOST', '127.0.0.1')
+REMOTE_DB_PORT = os.environ.get('DATABASE_PORT', 5432)
+REMOTE_DB_NAME = os.environ.get('POSTGRES_DB', 'cardio')
+REMOTE_DB_USER = os.environ.get('POSTGRES_USER', 'postgres')
+REMOTE_DB_PASSWORD = os.environ.get('POSTGRES_PASSWORD', 'qtFU39PydEccPdyK')
